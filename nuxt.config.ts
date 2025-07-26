@@ -25,9 +25,15 @@ export default defineNuxtConfig({
 
   ssr: false,
 
-  // nitro: {
-  //   preset: 'node',
-  // },
+  vite: {
+    server: {
+      allowedHosts: ['india.kingdesignn.ru']
+    }
+  },
+
+  nitro: {
+    preset: 'node',
+  },
 
   supabase: {
     redirect: false,

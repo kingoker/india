@@ -1,6 +1,6 @@
 <template>
   <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" @click="$emit('close')">
-    <div class="relative bg-white rounded-[32px] shadow-2xl max-w-[500px] md:max-w-[800px] w-full mx-2 p-6 md:p-10 flex flex-col" @click.stop>
+    <div class="relative bg-white rounded-[32px] shadow-2xl max-w-[500px] md:max-w-[800px] w-full mx-2 p-6 md:p-10 flex flex-col max-h-[90vh] overflow-y-auto" @click.stop>
       <!-- Кнопка закрытия -->
       <button
         class="absolute top-6 right-6 w-16 h-16 flex items-center justify-center rounded-full transition-colors duration-200 group"
@@ -16,7 +16,7 @@
       </button>
       <!-- Заголовок -->
       <div class="flex items-end justify-between mb-2 mt-2">
-        <h2 class="text-[56px] font-alice text-orange-400 font-normal text-left leading-[0.8] break-words">
+        <h2 class="text-[29px] md:text-[56px] font-alice text-orange-400 font-normal text-left leading-[0.8] break-words">
           {{ title }}
         </h2>
         <div class="w-16 h-16 flex-shrink-0"></div>
@@ -25,7 +25,7 @@
       <div class="flex flex-col md:flex-row gap-4 md:gap-[10px] items-start">
         <img v-if="image" :src="image" alt="" class="w-full md:w-[365px] object-contain rounded-2xl mb-2 md:mb-0 flex-shrink-0" />
         <img v-else src="https://saletur.ru/galery/tfoto/big/061/49/614981.jpg" alt="Заглушка" class="w-full md:w-[365px] object-contain rounded-2xl mb-2 md:mb-0 flex-shrink-0" />
-        <div class="text-black text-[24px] font-alice leading-relaxed break-words min-w-0">
+        <div class="text-black text-[24px] font-alice leading-tight break-words min-w-0">
           <slot>{{ text }}</slot>
         </div>
       </div>
@@ -90,5 +90,24 @@ button[aria-label="Закрыть"]:hover .circle-bg {
 }
 button[aria-label="Закрыть"]:hover .cross-line {
   stroke: #fff;
+}
+
+/* Кастомный скроллбар */
+.overflow-y-auto::-webkit-scrollbar {
+  width: 8px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: #f3f4f6;
+  border-radius: 4px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: #f59e42;
+  border-radius: 4px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: #d97706;
 }
 </style> 

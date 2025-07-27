@@ -149,10 +149,10 @@ const handleClose = () => {
     <div class="absolute inset-0 bg-black/50" @click="handleClose"></div>
     
     <!-- Модальное окно -->
-    <div class="relative bg-white rounded-[32px] p-8 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto lg:min-w-[783px]" @click.stop>
+    <div class="relative bg-white rounded-[32px] p-8 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto lg:min-w-[783px] scrollbar-thin scrollbar-thumb-orange-400 scrollbar-track-gray-100" @click.stop>
       <!-- Заголовок -->
       <div class="mb-6 pr-20">
-        <h3 class="text-[28px] md:text-[56px] font-alice font-bold text-orange-400 mb-2 leading-tight md:leading-normal">
+        <h3 class="text-[29px] md:text-[56px] font-alice font-bold text-orange-400 mb-2 leading-tight">
           Забронировать Место
         </h3>
         <div class="w-full h-[2px] bg-orange-400"></div>
@@ -179,14 +179,14 @@ const handleClose = () => {
       <form @submit.prevent="handleSubmit" class="space-y-6">
         <!-- Имя -->
         <div>
-          <label class="block text-[24px] font-alice font-semibold text-orange-400 mb-0 ml-[30px]">
+          <label class="block text-[16px] md:text-[24px] font-alice font-semibold text-orange-400 mb-0 ml-[30px]">
             *Имя:
           </label>
           <input
             v-model="formData.name"
             type="text"
             placeholder="Как к вам обращаться?"
-            class="w-full px-[30px] py-[10px] border-2 border-orange-400 rounded-[60px] text-[34px] font-alice focus:outline-none focus:border-orange-500 transition-colors duration-200 placeholder:text-gray-400/30 text-black"
+            class="w-full px-[30px] py-[10px] border-2 border-orange-400 rounded-[60px] text-[20px] md:text-[34px] font-alice focus:outline-none focus:border-orange-500 transition-colors duration-200 placeholder:text-gray-400/30 text-black"
             :class="{ 'border-red-500': errors.name }"
             :disabled="loading"
           />
@@ -195,7 +195,7 @@ const handleClose = () => {
         
         <!-- Телефон -->
         <div>
-          <label class="block text-[24px] font-alice font-semibold text-orange-400 mb-0 ml-[30px]">
+          <label class="block text-[16px] md:text-[24px] font-alice font-semibold text-orange-400 mb-0 ml-[30px]">
             *Телефон:
           </label>
           <input
@@ -203,7 +203,7 @@ const handleClose = () => {
             type="tel"
             placeholder="+7 999 123 45 67"
             @input="handlePhoneInput"
-            class="w-full px-[30px] py-[10px] border-2 border-orange-400 rounded-[60px] text-[34px] font-alice focus:outline-none focus:border-orange-500 transition-colors duration-200 placeholder:text-gray-400/30 text-black"
+            class="w-full px-[30px] py-[10px] border-2 border-orange-400 rounded-[60px] text-[20px] md:text-[34px] font-alice focus:outline-none focus:border-orange-500 transition-colors duration-200 placeholder:text-gray-400/30 text-black"
             :class="{ 'border-red-500': errors.phone }"
             :disabled="loading"
           />
@@ -212,14 +212,14 @@ const handleClose = () => {
         
         <!-- Комментарии -->
         <div>
-          <label class="block text-[24px] font-alice font-semibold text-orange-400 mb-0 ml-[30px]">
+          <label class="block text-[16px] md:text-[24px] font-alice font-semibold text-orange-400 mb-0 ml-[30px]">
             Комментарии:
           </label>
           <textarea
             v-model="formData.comments"
             placeholder="Ваши пожелания?"
             rows="3"
-            class="w-full px-[30px] py-[10px] border-2 border-orange-400 rounded-[60px] text-[34px] font-alice focus:outline-none focus:border-orange-500 transition-colors duration-200 resize-none placeholder:text-gray-400/30 text-black"
+            class="w-full px-[30px] py-[10px] border-2 border-orange-400 rounded-[30px] md:rounded-[60px] text-[20px] md:text-[34px] font-alice focus:outline-none focus:border-orange-500 transition-colors duration-200 resize-none placeholder:text-gray-400/30 text-black"
             :disabled="loading"
           ></textarea>
         </div>
@@ -236,4 +236,25 @@ const handleClose = () => {
       </form>
     </div>
   </div>
-</template> 
+</template>
+
+<style scoped>
+/* Кастомный скроллбар */
+.overflow-y-auto::-webkit-scrollbar {
+  width: 8px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: #f3f4f6;
+  border-radius: 4px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: #f59e42;
+  border-radius: 4px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: #d97706;
+}
+</style> 

@@ -66,11 +66,11 @@ const sortedTours = computed(() => {
         <span class="absolute top-4 right-4 z-20 transition-all duration-300 opacity-60 group-hover:opacity-100">
           <img src="https://wnfudwbexanzlzarfwtf.supabase.co/storage/v1/object/public/assets//arrow.svg" alt="arrow" width="55" height="55" draggable="false" />
         </span>
-        <div class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/80 to-transparent z-10"></div>
-        <div class="relative z-20 flex flex-col gap-2">
-          <h2 class="text-white font-montserrat font-bold text-[40px] leading-tight">{{ tour.title }}</h2>
-          <p class="text-white font-montserrat font-light text-[24px] opacity-90 leading-[1.1]">{{ tour.description }}</p>
-          <span class="inline-block self-start mt-2 px-[15px] py-[10px] rounded-full border border-white text-white text-[24px] font-montserrat font-light bg-white/50 backdrop-blur-md">
+        <div class="absolute bottom-0 left-0 w-full h-3/5 bg-gradient-to-t from-black/95 to-transparent z-10"></div>
+        <div class="relative z-20 flex flex-col gap-1">
+          <h2 class="text-white font-montserrat font-bold text-[34px] leading-[0.8]">{{ tour.title }}</h2>
+          <p class="text-white font-montserrat font-light text-[20px] opacity-90 leading-[1.1]">{{ tour.description }}</p>
+          <span class="inline-block self-start mt-2 px-[15px] py-[10px] rounded-full border border-white text-white text-[16px] font-montserrat font-light bg-white/50 backdrop-blur-md">
             {{ formatTourDates(tour.date_from, tour.date_to) }}
           </span>
         </div>

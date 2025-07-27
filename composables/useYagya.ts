@@ -11,8 +11,69 @@ export function useYagya() {
     loading.value = true
     error.value = null
     try {
-      // Временно используем статические данные для тестирования
-      // В реальном проекте здесь будет API запрос
+      const supabase = useSupabaseClient()
+      
+      // Загружаем категории
+      const { data: categoriesData, error: categoriesError } = await supabase
+        .from('categories')
+        .select('*')
+        .eq('is_active', true)
+        .order('sort_order', { ascending: true })
+      
+      if (categoriesError) {
+        throw categoriesError
+      }
+      
+      categories.value = categoriesData || []
+      
+      // Загружаем ягьи с категориями
+      let query = supabase
+        .from('yagya')
+        .select(`
+          *,
+          yagya_categories!inner(
+            category:categories(*)
+          )
+        `)
+        .order('created_at', { ascending: false })
+      
+      // Применяем фильтры
+      if (filters?.category_slug) {
+        query = query.eq('yagya_categories.category.slug', filters.category_slug)
+      }
+      
+      if (filters?.is_featured) {
+        query = query.eq('is_featured', true)
+      }
+      
+      const { data: yagyaData, error: yagyaError } = await query
+      
+      if (yagyaError) {
+        throw yagyaError
+      }
+      
+      // Преобразуем данные в нужный формат
+      const transformedYagya: YagyaWithCategories[] = (yagyaData || []).map((item: any) => ({
+        id: item.id,
+        title: item.title,
+        description: item.description,
+        date_from: item.date_from,
+        date_to: item.date_to,
+        time: item.time,
+        image_url: item.image_url,
+        is_featured: item.is_featured,
+        created_at: item.created_at,
+        updated_at: item.updated_at,
+        categories: item.yagya_categories?.map((yc: any) => yc.category) || []
+      }))
+      
+      yagya.value = transformedYagya
+      
+    } catch (err) {
+      console.error('Ошибка загрузки ягьи:', err)
+      error.value = err instanceof Error ? err.message : 'Произошла ошибка при загрузке данных'
+      
+      // Fallback на mock данные в случае ошибки
       const mockCategories: Category[] = [
         {
           id: '550e8400-e29b-41d4-a716-446655440101',
@@ -64,7 +125,7 @@ export function useYagya() {
           is_featured: false,
           created_at: '2025-01-01T00:00:00Z',
           updated_at: '2025-01-01T00:00:00Z',
-          categories: [mockCategories[0]!, mockCategories[1]!] // Семья, Деньги
+          categories: [mockCategories[0]!, mockCategories[1]!]
         },
         {
           id: '550e8400-e29b-41d4-a716-446655440002',
@@ -77,7 +138,7 @@ export function useYagya() {
           is_featured: false,
           created_at: '2025-01-01T00:00:00Z',
           updated_at: '2025-01-01T00:00:00Z',
-          categories: [mockCategories[0]!] // Семья
+          categories: [mockCategories[0]!]
         },
         {
           id: '550e8400-e29b-41d4-a716-446655440003',
@@ -90,31 +151,15 @@ export function useYagya() {
           is_featured: false,
           created_at: '2025-01-01T00:00:00Z',
           updated_at: '2025-01-01T00:00:00Z',
-          categories: [mockCategories[2]!] // Карьера
+          categories: [mockCategories[2]!]
         }
       ]
-
-      // Применяем фильтры
-      let filteredYagya = mockYagya
-      if (filters?.category_slug) {
-        filteredYagya = mockYagya.filter(item => 
-          item.categories.some(cat => cat.slug === filters.category_slug)
-        )
-      }
-
-
-
-      if (filters?.is_featured) {
-        filteredYagya = filteredYagya.filter(item => item.is_featured)
-      }
-
-      yagya.value = filteredYagya
+      
       categories.value = mockCategories
-    } catch (err) {
-      error.value = err instanceof Error ? err.message : 'Unknown error'
-      console.error('Error in fetchYagya:', err)
+      yagya.value = mockYagya
+    } finally {
+      loading.value = false
     }
-    loading.value = false
   }
 
   const getYagyaByCategory = (categorySlug: string) => {

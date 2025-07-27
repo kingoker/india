@@ -133,7 +133,7 @@ const handleBookingSubmit = async (bookingData) => {
     <!-- Что важно знать перед ягья -->
     <section class="px-4 md:px-[100px] mb-16">
       <div class="max-w-[1290px] mx-auto">
-        <h2 class="text-[36px] font-alice font-bold text-orange-400 uppercase mb-8 text-center md:text-left">
+        <h2 class="text-[24px] md:text-[36px] font-alice font-bold text-orange-400 uppercase mb-8 text-center md:text-left">
           Что важно знать перед ягья
         </h2>
         <!-- Loading State для информации -->
@@ -186,7 +186,7 @@ const handleBookingSubmit = async (bookingData) => {
     <!-- Фокус ягьи -->
     <section class="px-4 md:px-[100px] mb-16">
       <div class="max-w-[1290px] mx-auto">
-        <h2 class="text-[36px] font-alice font-bold text-orange-400 uppercase mb-8 text-center md:text-left">
+        <h2 class="text-[24px] md:text-[36px] font-alice font-bold text-orange-400 uppercase mb-8 text-center md:text-left">
           Фокус ягьи
         </h2>
 
@@ -194,7 +194,7 @@ const handleBookingSubmit = async (bookingData) => {
                       <button 
                         @click="activeFilter = 'all'"
                         :class="[
-                          'px-[30px] py-[15px] font-montserrat font-semibold text-[22px] rounded-full transition-all duration-200 shadow-md hover:shadow-lg',
+                          'px-[15px] md:px-[30px] py-[8px] md:py-[15px] font-montserrat font-semibold text-[14px] md:text-[22px] rounded-full transition-all duration-200 shadow-md hover:shadow-lg',
                           activeFilter === 'all' 
                             ? 'bg-orange-400 text-white border-2 border-orange-400' 
                             : 'bg-white text-orange-400 border-2 border-orange-400 hover:bg-orange-400 hover:text-white'
@@ -207,7 +207,7 @@ const handleBookingSubmit = async (bookingData) => {
                         :key="category.id"
                         @click="activeFilter = category.slug"
                         :class="[
-                          'px-[30px] py-[15px] font-montserrat font-semibold text-[22px] rounded-full transition-all duration-200 shadow-md hover:shadow-lg',
+                          'px-[15px] md:px-[30px] py-[8px] md:py-[15px] font-montserrat font-semibold text-[14px] md:text-[22px] rounded-full transition-all duration-200 shadow-md hover:shadow-lg',
                           activeFilter === category.slug 
                             ? 'bg-orange-400 text-white border-2 border-orange-400' 
                             : 'bg-white text-orange-400 border-2 border-orange-400 hover:bg-orange-400 hover:text-white'
@@ -270,19 +270,19 @@ const handleBookingSubmit = async (bookingData) => {
                     class="absolute inset-0 w-full h-full object-cover object-center z-0"
                     draggable="false"
                   />
-                  <div class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/90 to-transparent z-10"></div>
-                  <div class="relative z-20 flex flex-col gap-2">
-                    <h4 class="text-white font-montserrat font-bold text-[40px] leading-tight">
+                  <div class="absolute bottom-0 left-0 w-full h-full bg-gradient-to-t from-black/95 to-transparent z-10"></div>
+                  <div class="relative z-20 flex flex-col gap-1">
+                    <h4 class="text-white font-montserrat font-bold text-[34px] leading-[0.8]">
                       {{ item.title }}
                     </h4>
-                    <p class="text-white font-montserrat font-light text-[24px] opacity-90 leading-[1.1]">
+                    <p class="text-white font-montserrat font-light text-[20px] opacity-90 leading-[1.1]">
                       {{ item.description }}
                     </p>
-                    <div class="flex flex-row gap-2 mt-2">
-                      <span class="inline-block self-start px-[15px] py-[10px] rounded-full border border-white text-white text-[17px] font-montserrat font-light bg-white/50 backdrop-blur-md">
+                    <div class="flex flex-row gap-4 mt-2">
+                      <span class="text-white text-[16px] font-montserrat font-bold underline">
                         {{ formatYagyaDate(item.date_from, item.date_to) }}
                       </span>
-                      <span class="inline-block self-start px-[15px] py-[10px] rounded-full border border-white text-white text-[17px] font-montserrat font-light bg-white/50 backdrop-blur-md">
+                      <span class="text-white text-[16px] font-montserrat font-bold underline">
                         {{ formatYagyaTime(item.time) }} Мск
                       </span>
                     </div>

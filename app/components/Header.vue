@@ -11,7 +11,7 @@
         </NuxtLink>
       </div>
       <!-- Навигация -->
-      <nav class="flex flex-row gap-8 flex-1 justify-center">
+      <nav class="flex flex-row gap-[10px] md:gap-8 flex-1 justify-center">
         <NuxtLink
           to="/tours"
           :class="[

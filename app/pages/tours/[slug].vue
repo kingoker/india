@@ -66,7 +66,7 @@
             <h2 class="font-alice font-normal text-[36px] text-orange-400 mb-6 uppercase flex items-center gap-3">
               🪐 О ТУРЕ
             </h2>
-            <p class="text-gray-700 font-montserrat font-normal text-[30px] leading-[1.2] mb-8">
+            <p class="text-gray-700 font-montserrat font-normal text-[23px] md:text-[35px] leading-[1.2] mb-8">
               {{ tour?.description || 'Духовное паломничество по храмам Наваграха — это особый тур для очищения, получения высшей поддержки и трансформации судьбы. Индия — это место, где исполняются желания и происходят чудесные изменения в жизни.' }}
             </p>
           </div>
@@ -90,24 +90,9 @@
             <h2 class="font-alice font-normal text-[36px] text-orange-400 mb-6 uppercase flex items-center gap-3">
               ✨ ПОЧЕМУ ЭТО ОСОБЕННЫЙ ТУР?
             </h2>
-            <ul class="space-y-4 font-montserrat font-normal text-[30px] leading-[1.2] text-gray-700">
-              <li class="flex items-start gap-3">
-                <span class="w-2 h-2 bg-orange-400 rounded-full mt-2 flex-shrink-0"></span>
-                <span>Посещение храмов планет и Накшатр для гармонизации жизни</span>
-              </li>
-              <li class="flex items-start gap-3">
-                <span class="w-2 h-2 bg-orange-400 rounded-full mt-2 flex-shrink-0"></span>
-                <span>Выполнение пудж для здоровья, процветания и снятия кармических блоков</span>
-              </li>
-              <li class="flex items-start gap-3">
-                <span class="w-2 h-2 bg-orange-400 rounded-full mt-2 flex-shrink-0"></span>
-                <span>Йога у океана и медитации в священных местах</span>
-              </li>
-              <li class="flex items-start gap-3">
-                <span class="w-2 h-2 bg-orange-400 rounded-full mt-2 flex-shrink-0"></span>
-                <span>Посещение Ауровиля и Пондичерри</span>
-              </li>
-            </ul>
+            <p class="text-gray-700 font-montserrat font-normal text-[23px] md:text-[35px] leading-[1.2]">
+              Посещение храмов планет и Накшатр для гармонизации жизни. Выполнение пудж для здоровья, процветания и снятия кармических блоков. Йога у океана и медитации в священных местах. Посещение Ауровиля и Пондичерри.
+            </p>
           </div>
         </div>
 
@@ -138,12 +123,12 @@
                 </button>
                 <Collapse :when="openIndex === idx">
                   <div
-                    class="border-2 border-orange-400 rounded-b-[60px] bg-white px-8 pt-16 py-8 flex flex-row gap-8 items-center -mt-10 relative z-0 border-t-0"
+                    class="border-2 border-orange-400 rounded-b-[60px] bg-white px-8 pt-16 py-8 flex flex-col md:flex-row gap-8 items-center -mt-10 relative z-0 border-t-0"
                   >
                     <svg v-if="item.icon === 'plane'" class="w-28 h-28 text-orange-400 flex-shrink-0" fill="none" viewBox="0 0 64 64">
                       <path d="M8 56L56 8M8 8l48 48" stroke="#FF9500" stroke-width="3"/>
                     </svg>
-                    <span class="font-montserrat text-[28px] text-black leading-[1.2]">
+                    <span class="font-montserrat text-[18px] md:text-[28px] text-black leading-[1.2]">
                       {{ item.content }}
                     </span>
                   </div>

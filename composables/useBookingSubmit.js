@@ -61,6 +61,81 @@ export const useBookingSubmit = () => {
         throw new Error(supabaseError.message)
       }
 
+      // Отправляем уведомление в Telegram
+      try {
+        const config = useRuntimeConfig()
+        
+        // Определяем тип заявки и название
+        const itemType = bookingData.yagya_id ? 'yagya' : 'tour'
+        const itemId = bookingData.yagya_id || bookingData.tour_id
+        const itemTitle = bookingData.itemTitle || 'Без названия'
+        
+        // Получаем название тура/ягьи из базы данных
+        let itemName = itemTitle
+        try {
+          const supabase = useSupabaseClient()
+          
+          if (itemType === 'tour') {
+            const { data: tourData } = await supabase
+              .from('tours')
+              .select('title')
+              .eq('id', itemId)
+              .single()
+            
+            if (tourData && tourData.title) {
+              itemName = tourData.title
+            }
+          } else {
+            const { data: yagyaData } = await supabase
+              .from('yagya')
+              .select('title')
+              .eq('id', itemId)
+              .single()
+            
+            if (yagyaData && yagyaData.title) {
+              itemName = yagyaData.title
+            }
+          }
+        } catch (error) {
+          console.error('Ошибка получения названия:', error)
+          // Используем itemTitle как fallback
+        }
+        
+        // Форматируем сообщение
+        const emoji = itemType === 'tour' ? '🏛️' : '🔥'
+        const typeText = itemType === 'tour' ? 'ТУР' : 'ЯГЬЯ'
+        
+        let message = `${emoji} *НОВАЯ ЗАЯВКА НА ${typeText}*\n\n`
+        message += `👤 *Имя:* ${bookingData.name.trim()}\n`
+        message += `📞 *Телефон:* ${bookingData.phone.trim()}\n`
+        message += `📋 *Название:* ${itemName}\n`
+        
+        if (bookingData.comments && bookingData.comments.trim()) {
+          message += `💬 *Комментарий:* ${bookingData.comments.trim()}\n`
+        }
+        
+        message += `\n⏰ *Время:* ${new Date().toLocaleString('ru-RU', {
+          timeZone: 'Europe/Moscow',
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
+        })}`
+        
+        // Отправляем сообщение
+        await $fetch('/api/telegram/send', {
+          method: 'POST',
+          body: {
+            message,
+            chatIds: config.public.telegramChatIds
+          }
+        })
+      } catch (telegramError) {
+        console.error('Ошибка отправки в Telegram:', telegramError)
+        // Не прерываем процесс, так как заявка уже сохранена в БД
+      }
+
       return data
 
     } catch (err) {

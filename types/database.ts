@@ -26,6 +26,18 @@ export interface Yagya {
   updated_at: string
 }
 
+export interface Tour {
+  id: string
+  title: string
+  description?: string
+  slug: string
+  date_from: string
+  date_to: string
+  image_url?: string
+  created_at: string
+  updated_at: string
+}
+
 export interface YagyaCategory {
   id: string
   yagya_id: string
@@ -106,4 +118,92 @@ export interface CreateBookingRequest {
 
 export interface BookingWithYagya extends Booking {
   yagya: Yagya
+}
+
+// Интерфейсы для детальной информации о турах
+export interface TourDetails {
+  id: string
+  tour_id: string
+  about_tour: string
+  why_special: string
+  about_tour_img?: string
+  why_special_img?: string
+  created_at: string
+  updated_at: string
+}
+
+export interface TourInfo {
+  id: string
+  tour_id: string
+  title: string
+  description: string
+  image_url?: string
+  sort_order: number
+  created_at: string
+  updated_at: string
+}
+
+export interface TourDay {
+  id: string
+  tour_id: string
+  title: string
+  description: string
+  image_url?: string
+  day_number: number
+  created_at: string
+  updated_at: string
+}
+
+export interface TourImage {
+  id: string
+  tour_id: string
+  image_url: string
+  title?: string
+  description?: string
+  sort_order: number
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface TourWithDetails extends Tour {
+  tour_details?: TourDetails
+  tour_info?: TourInfo[]
+  tour_days?: TourDay[]
+  tour_images?: TourImage[]
+}
+
+// Интерфейсы для API запросов
+export interface CreateTourDetailsRequest {
+  tour_id: string
+  about_tour: string
+  why_special: string
+}
+
+export interface UpdateTourDetailsRequest extends Partial<CreateTourDetailsRequest> {
+  id: string
+}
+
+export interface CreateTourInfoRequest {
+  tour_id: string
+  title: string
+  description: string
+  image_url?: string
+  sort_order?: number
+}
+
+export interface UpdateTourInfoRequest extends Partial<CreateTourInfoRequest> {
+  id: string
+}
+
+export interface CreateTourDayRequest {
+  tour_id: string
+  title: string
+  description: string
+  image_url?: string
+  day_number: number
+}
+
+export interface UpdateTourDayRequest extends Partial<CreateTourDayRequest> {
+  id: string
 } 

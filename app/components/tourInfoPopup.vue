@@ -23,11 +23,12 @@
       </div>
       <div class="h-1 w-full bg-orange-400 mb-4" style="opacity:0.3"></div>
       <div class="flex flex-col md:flex-row gap-4 md:gap-[10px] items-start">
-        <img v-if="image" :src="image" alt="" class="w-full md:w-[365px] object-contain rounded-2xl mb-2 md:mb-0 flex-shrink-0" />
-        <img v-else src="https://saletur.ru/galery/tfoto/big/061/49/614981.jpg" alt="Заглушка" class="w-full md:w-[365px] object-contain rounded-2xl mb-2 md:mb-0 flex-shrink-0" />
-        <div class="text-black text-[24px] font-alice leading-tight break-words min-w-0">
-          <slot>{{ text }}</slot>
-        </div>
+        <GoogleDriveImage v-if="image" :src="image" alt="" class="w-full md:w-[365px] object-contain rounded-2xl mb-2 md:mb-0 flex-shrink-0" />
+        <GoogleDriveImage v-else src="https://saletur.ru/galery/tfoto/big/061/49/614981.jpg" alt="Заглушка" class="w-full md:w-[365px] object-contain rounded-2xl mb-2 md:mb-0 flex-shrink-0" />
+        <FormattedText 
+          :html="text"
+          text-class="text-black text-[24px] font-alice leading-tight break-words min-w-0"
+        />
       </div>
     </div>
   </div>
@@ -35,6 +36,8 @@
 
 <script setup>
 import { onMounted, onUnmounted } from 'vue'
+import FormattedText from './FormattedText.vue'
+import GoogleDriveImage from './GoogleDriveImage.vue'
 
 const props = defineProps({
   title: String,

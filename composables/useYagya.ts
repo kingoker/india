@@ -31,7 +31,7 @@ export function useYagya() {
         .from('yagya')
         .select(`
           *,
-          yagya_categories!inner(
+          yagya_categories(
             category:categories(*)
           )
         `)
@@ -64,7 +64,7 @@ export function useYagya() {
         is_featured: item.is_featured,
         created_at: item.created_at,
         updated_at: item.updated_at,
-        categories: item.yagya_categories?.map((yc: any) => yc.category) || []
+        categories: item.yagya_categories?.filter((yc: any) => yc.category)?.map((yc: any) => yc.category) || []
       }))
       
       yagya.value = transformedYagya
@@ -167,12 +167,30 @@ export function useYagya() {
       return yagya.value
     }
     return yagya.value.filter(item => 
-      item.categories.some(cat => cat.slug === categorySlug)
+      item.categories && item.categories.length > 0 
+        ? item.categories.some(cat => cat.slug === categorySlug)
+        : false // Ягьи без категорий не показываются при фильтрации по категории
     )
   }
 
   const getCategories = () => {
-    return categories.value.filter(cat => cat.is_active).sort((a, b) => a.sort_order - b.sort_order)
+    const activeCategories = categories.value.filter(cat => cat.is_active)
+    
+    // Подсчитываем количество ягья для каждой категории
+    const categoriesWithCount = activeCategories.map(category => {
+      const yagyaCount = yagya.value.filter(item => 
+        item.categories && item.categories.length > 0 &&
+        item.categories.some(cat => cat.id === category.id)
+      ).length
+      
+      return {
+        ...category,
+        yagyaCount
+      }
+    })
+    
+    // Сортируем по количеству ягья (по убыванию)
+    return categoriesWithCount.sort((a, b) => b.yagyaCount - a.yagyaCount)
   }
 
   const formatYagyaDate = (dateFrom: string, dateTo?: string) => {

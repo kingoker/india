@@ -77,7 +77,9 @@ const handleSubmit = () => {
   const submitData = {
     name: formData.value.name.trim(),
     phone: formData.value.phone.trim(),
-    comments: formData.value.comments.trim() || undefined
+    comments: formData.value.comments.trim() || undefined,
+    itemTitle: props.itemTitle, // Добавляем название
+    itemType: props.itemType // Добавляем тип
   }
 
   // Добавляем соответствующий ID в зависимости от типа

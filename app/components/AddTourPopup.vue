@@ -7,7 +7,7 @@
     <div class="relative bg-white rounded-[32px] p-8 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto lg:min-w-[783px] scrollbar-thin scrollbar-thumb-orange-400 scrollbar-track-gray-100" @click.stop>
       <!-- Заголовок -->
       <div class="mb-6 pr-20">
-        <h3 class="text-[29px] md:text-[56px] font-alice font-bold text-orange-400 mb-2 leading-tight">
+        <h3 class="text-[29px] md:text-[36px] font-alice font-bold text-orange-400 mb-2 leading-tight">
           {{ editingTour ? 'Редактировать тур' : 'Добавить новый тур' }}
         </h3>
         <div class="w-full h-[2px] bg-orange-400"></div>
@@ -129,6 +129,7 @@
 
 <script setup>
 import { ref, watch, onUnmounted } from 'vue'
+import { processImageUrl } from '../../utils/googleDriveUtils.js'
 
 const props = defineProps({
   isOpen: {
@@ -244,13 +245,16 @@ const handleSubmit = async () => {
                     return
                   }
                   
+                  // Обрабатываем URL изображения
+                  const processedImageUrl = processImageUrl(formData.value.image_url)
+                  
                   // Обновляем тур
                   const updateData = {
                     title: formData.value.title,
                     description: formData.value.description,
                     date_from: formData.value.date_from,
                     date_to: formData.value.date_to,
-                    image_url: formData.value.image_url,
+                    image_url: processedImageUrl,
                     slug: formData.value.slug
                   }
                   
@@ -283,6 +287,9 @@ const handleSubmit = async () => {
                     result = data[0]
                   }
     } else {
+      // Обрабатываем URL изображения
+      const processedImageUrl = processImageUrl(formData.value.image_url)
+      
       // Добавляем новый тур
       const { data, error: insertError } = await supabase
         .from('tours')
@@ -291,7 +298,7 @@ const handleSubmit = async () => {
           description: formData.value.description,
           date_from: formData.value.date_from,
           date_to: formData.value.date_to,
-          image_url: formData.value.image_url,
+          image_url: processedImageUrl,
           slug: formData.value.slug
         }])
         .select()
@@ -299,8 +306,30 @@ const handleSubmit = async () => {
       if (insertError) {
         error.value = 'Ошибка добавления тура: ' + insertError.message
       } else {
-        success.value = 'Тур успешно добавлен!'
         result = data[0]
+        
+        // Автоматически создаем запись в tour_details для нового тура
+        try {
+          const { error: detailsError } = await supabase
+            .from('tour_details')
+            .insert([{
+              tour_id: result.id,
+              about_tour: formData.value.description, // Используем описание как начальный текст
+              why_special: 'Особенности этого тура будут добавлены позже.',
+              about_tour_img: null,
+              why_special_img: null
+            }])
+
+          if (detailsError) {
+            console.warn('Предупреждение: Не удалось создать детали тура:', detailsError.message)
+            // Не прерываем процесс, так как тур уже создан
+          }
+        } catch (detailsErr) {
+          console.warn('Предупреждение: Ошибка при создании деталей тура:', detailsErr)
+          // Не прерываем процесс, так как тур уже создан
+        }
+        
+        success.value = 'Тур успешно добавлен!'
       }
     }
 

@@ -2,6 +2,7 @@
 import { useTours } from '../../../composables/useTours'
 import { useAdminCheck } from '../../../composables/useAdminCheck'
 import { ref, computed, onMounted } from 'vue'
+import GoogleDriveImage from '../../components/GoogleDriveImage.vue'
 
 const route = useRoute()
 const { tours, loading, error, fetchTours } = useTours()
@@ -53,8 +54,6 @@ const handleTourAdded = (newTour) => {
 const handleTourEdited = (editedTour) => {
   // Обновляем список туров после редактирования
   fetchTours()
-  // Перезагружаем страницу для отображения изменений
-  window.location.reload()
 }
 
 const openEditTourPopup = (tour) => {
@@ -97,7 +96,7 @@ const deleteTour = async (tourId) => {
 <template>
   <section class="relative w-full min-h-[500px] flex items-end justify-center overflow-hidden mb-12">
     <!-- Баннер -->
-    <img
+    <GoogleDriveImage
       src="https://wnfudwbexanzlzarfwtf.supabase.co/storage/v1/object/public/assets//tours%20banner.png"
       alt="Туры баннер"
       class="absolute inset-0 w-full h-full object-cover object-center z-0"
@@ -148,7 +147,7 @@ const deleteTour = async (tourId) => {
           </button>
         </div>
 
-        <img
+        <GoogleDriveImage
           :src="tour.image_url || defaultImage"
           :alt="tour.title"
           class="absolute inset-0 w-full h-full object-cover object-center z-0"

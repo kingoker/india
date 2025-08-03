@@ -45,4 +45,21 @@ export default defineNuxtConfig({
     //   saveRedirectToCookie: false,
     // }
   },
+
+  runtimeConfig: {
+    telegramBotToken: process.env.TELEGRAM_BOT_TOKEN,
+    public: {
+      telegramChatIds: process.env.TELEGRAM_CHAT_IDS?.split(',') || []
+    }
+  },
+
+  // Отладочная информация
+  hooks: {
+    'build:before': () => {
+      console.log('Environment variables:', {
+        TELEGRAM_BOT_TOKEN: process.env.TELEGRAM_BOT_TOKEN ? 'SET' : 'NOT SET',
+        TELEGRAM_CHAT_IDS: process.env.TELEGRAM_CHAT_IDS ? 'SET' : 'NOT SET'
+      })
+    }
+  }
 })

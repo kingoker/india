@@ -17,11 +17,13 @@
 </template>
 
 <script setup>
+// Оптимизированная загрузка шрифтов
 import '@fontsource/montserrat/400.css'
 import '@fontsource/montserrat/700.css'
 import '@fontsource/alice'
 import { useAdminCheck } from '../composables/useAdminCheck'
 import { useAdminAuth } from '../composables/useAdminAuth'
+import { nextTick } from 'vue'
 
 const route = useRoute()
 const { isAdminPopupOpen, closeAdminPopup, openAdminPopup } = useAdminAuth()
@@ -38,9 +40,11 @@ watch(() => route.query, (newQuery) => {
   if (newQuery.admin) {
     openAdminPopup()
     // Удаляем параметр admin из URL
-    navigateTo({
-      path: route.path,
-      query: { ...newQuery, admin: undefined }
+    nextTick(() => {
+      navigateTo({
+        path: route.path,
+        query: { ...newQuery, admin: undefined }
+      })
     })
   }
 }, { immediate: true })

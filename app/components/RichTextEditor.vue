@@ -314,7 +314,7 @@ const toggleLineHeightDropdown = (event) => {
 
 // Выбор шрифта
 const selectFont = (font) => {
-  console.log('Selecting font:', font)
+
   currentFont.value = font === 'alice' ? 'Alice' : 'Montserrat'
   applyStyleToSelection('fontFamily', font === 'alice' ? 'Alice, serif' : 'Montserrat, sans-serif')
   showFontDropdown.value = false
@@ -322,7 +322,7 @@ const selectFont = (font) => {
 
 // Выбор размера шрифта
 const selectFontSize = (size) => {
-  console.log('Selecting font size:', size)
+
   currentFontSize.value = size
   applyStyleToSelection('fontSize', `${size}px`)
   showSizeDropdown.value = false
@@ -330,7 +330,7 @@ const selectFontSize = (size) => {
 
 // Выбор межстрочного интервала
 const selectLineHeight = (height) => {
-  console.log('Selecting line height:', height)
+
   currentLineHeight.value = height
   applyStyleToSelection('lineHeight', height)
   showLineHeightDropdown.value = false
@@ -422,7 +422,6 @@ const updateCurrentValuesFromHTML = () => {
       const fontSize = parseInt(styles.fontSize.replace('px', ''))
       if (fontSize && fontSizes.includes(fontSize)) {
         currentFontSize.value = fontSize
-        console.log('Updated font size from HTML:', fontSize)
       }
     }
     
@@ -431,10 +430,8 @@ const updateCurrentValuesFromHTML = () => {
       const fontFamily = styles.fontFamily
       if (fontFamily.includes('Alice')) {
         currentFont.value = 'Alice'
-        console.log('Updated font from HTML: Alice')
       } else if (fontFamily.includes('Montserrat')) {
         currentFont.value = 'Montserrat'
-        console.log('Updated font from HTML: Montserrat')
       }
     }
     
@@ -443,7 +440,6 @@ const updateCurrentValuesFromHTML = () => {
       const lineHeight = parseFloat(styles.lineHeight)
       if (lineHeight && lineHeights.includes(lineHeight)) {
         currentLineHeight.value = lineHeight
-        console.log('Updated line height from HTML:', lineHeight)
       }
     }
   } else {
@@ -459,7 +455,6 @@ const updateCurrentValuesFromHTML = () => {
         const fontSize = parseInt(fontSizeAttr.replace('px', ''))
         if (fontSize && fontSizes.includes(fontSize)) {
           currentFontSize.value = fontSize
-          console.log('Updated font size from data attribute:', fontSize)
         }
       }
       
@@ -468,10 +463,8 @@ const updateCurrentValuesFromHTML = () => {
       if (fontFamilyAttr) {
         if (fontFamilyAttr === 'alice') {
           currentFont.value = 'Alice'
-          console.log('Updated font from data attribute: Alice')
         } else if (fontFamilyAttr === 'montserrat') {
           currentFont.value = 'Montserrat'
-          console.log('Updated font from data attribute: Montserrat')
         }
       }
       
@@ -481,7 +474,6 @@ const updateCurrentValuesFromHTML = () => {
         const lineHeight = parseFloat(lineHeightAttr)
         if (lineHeight && lineHeights.includes(lineHeight)) {
           currentLineHeight.value = lineHeight
-          console.log('Updated line height from data attribute:', lineHeight)
         }
       }
     }
@@ -490,7 +482,6 @@ const updateCurrentValuesFromHTML = () => {
 
 // Применение стиля к выделенному тексту
 const applyStyleToSelection = (property, value) => {
-  console.log('Applying style:', property, value)
   if (!editor.value) {
     console.warn('Editor not found')
     return
@@ -501,33 +492,28 @@ const applyStyleToSelection = (property, value) => {
   // Ждем немного для стабилизации
   setTimeout(() => {
     const selection = window.getSelection()
-    console.log('Selection:', selection)
     if (!selection || selection.rangeCount === 0) {
       console.warn('No selection found')
       return
     }
     
     const range = selection.getRangeAt(0)
-    console.log('Range:', range)
     if (!range) {
       console.warn('No range found')
       return
     }
     
     if (range.collapsed) {
-      console.log('Range is collapsed, applying to block')
       // Если нет выделения, применяем к текущему блоку
       const container = range.commonAncestorContainer
       const element = container.nodeType === Node.TEXT_NODE ? container.parentElement : container
       
       if (element && element !== editor.value) {
-        console.log('Applying to element:', element)
         element.style[property] = value
         // Добавляем data-атрибут для сохранения
         element.setAttribute(`data-${property.replace(/([A-Z])/g, '-$1').toLowerCase()}`, value)
       }
     } else {
-      console.log('Range has selection, applying to selection')
       
       // Проверяем, можно ли обернуть содержимое
       const canSurround = range.startContainer.nodeType === Node.TEXT_NODE && 
@@ -543,21 +529,18 @@ const applyStyleToSelection = (property, value) => {
         
         try {
           range.surroundContents(span)
-          console.log('Successfully wrapped content')
         } catch (e) {
           console.warn('Error wrapping content:', e)
           applyStyleToParent(property, value)
         }
       } else {
         // Если выделение сложное, применяем стили к каждому текстовому узлу
-        console.log('Complex selection, applying to text nodes')
         applyStyleToTextNodes(range, property, value)
       }
     }
     
     // Сохраняем стили в HTML
     const html = saveStylesToHTML(editor.value.innerHTML)
-    console.log('Saved HTML:', html)
     emit('update:modelValue', html)
   }, 10)
 }
@@ -572,7 +555,6 @@ const applyStyleToParent = (property, value) => {
   const element = container.nodeType === Node.TEXT_NODE ? container.parentElement : container
   
   if (element && element !== editor.value) {
-    console.log('Applying to parent element:', element)
     element.style[property] = value
     element.setAttribute(`data-${property.replace(/([A-Z])/g, '-$1').toLowerCase()}`, value)
   }
@@ -601,7 +583,6 @@ const applyStyleToTextNodes = (range, property, value) => {
   
   textNodes.forEach(textNode => {
     if (textNode.parentElement && textNode.parentElement !== editor.value) {
-      console.log('Applying to text node parent:', textNode.parentElement)
       textNode.parentElement.style[property] = value
       textNode.parentElement.setAttribute(`data-${property.replace(/([A-Z])/g, '-$1').toLowerCase()}`, value)
     }

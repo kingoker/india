@@ -1,15 +1,10 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
-  devtools: { enabled: true },
+  devtools: { enabled: false },
   modules: ['@nuxtjs/tailwindcss', // временно отключено
-  '@nuxtjs/supabase', '@nuxt/image-edge', '@nuxt/image'],
-  image: {
-    domains: [
-      'images.unsplash.com',
-      'wnfudwbexanzlzarfwtf.supabase.co'
-    ]
-  },
+  '@nuxtjs/supabase'],
+
 
   tailwindcss: {
     viewer: false,
@@ -28,6 +23,25 @@ export default defineNuxtConfig({
   vite: {
     server: {
       allowedHosts: ['india.kingdesignn.ru']
+    },
+    // Оптимизация сборки
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            vendor: ['vue', 'vue-router'],
+            supabase: ['@supabase/supabase-js']
+          }
+        }
+      }
+    },
+    // Оптимизация CSS
+    css: {
+      preprocessorOptions: {
+        scss: {
+          additionalData: '@import "@/assets/styles/variables.scss";'
+        }
+      }
     }
   },
 
@@ -53,13 +67,25 @@ export default defineNuxtConfig({
     }
   },
 
-  // Отладочная информация
-  hooks: {
-    'build:before': () => {
-      console.log('Environment variables:', {
-        TELEGRAM_BOT_TOKEN: process.env.TELEGRAM_BOT_TOKEN ? 'SET' : 'NOT SET',
-        TELEGRAM_CHAT_IDS: process.env.TELEGRAM_CHAT_IDS ? 'SET' : 'NOT SET'
-      })
+  // Оптимизация производительности
+  app: {
+    head: {
+      link: [
+        // Предзагрузка критических ресурсов
+        { rel: 'preload', href: 'https://wnfudwbexanzlzarfwtf.supabase.co/storage/v1/object/public/assets//tours%20banner.png', as: 'image' },
+        { rel: 'preload', href: 'https://wnfudwbexanzlzarfwtf.supabase.co/storage/v1/object/public/assets//arrow.svg', as: 'image' },
+        // DNS prefetch для внешних ресурсов
+        { rel: 'dns-prefetch', href: 'https://wnfudwbexanzlzarfwtf.supabase.co' },
+        { rel: 'dns-prefetch', href: 'https://saletur.ru' }
+      ],
+      meta: [
+        // Оптимизация для мобильных устройств
+        { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=5' },
+        // DNS prefetch для внешних ресурсов
+        { 'http-equiv': 'x-dns-prefetch-control', content: 'on' }
+      ]
     }
-  }
+  },
+
+
 })

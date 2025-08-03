@@ -6,8 +6,16 @@ export function useYagya() {
   const categories = ref<Category[]>([])
   const loading = ref(true)
   const error = ref<string | null>(null)
+  const lastFetch = ref<number>(0)
+  const CACHE_DURATION = 5 * 60 * 1000 // 5 минут
 
-  const fetchYagya = async (filters?: YagyaFilters) => {
+  const fetchYagya = async (filters?: YagyaFilters, force = false) => {
+    // Проверяем кэш
+    const now = Date.now()
+    if (!force && yagya.value.length > 0 && (now - lastFetch.value) < CACHE_DURATION) {
+      return
+    }
+    
     loading.value = true
     error.value = null
     try {
@@ -68,6 +76,7 @@ export function useYagya() {
       }))
       
       yagya.value = transformedYagya
+      lastFetch.value = now
       
     } catch (err) {
       console.error('Ошибка загрузки ягьи:', err)
@@ -218,9 +227,8 @@ export function useYagya() {
 
 
 
-  onMounted(() => {
-    fetchYagya()
-  })
+  // Загружаем данные сразу при создании composable
+  fetchYagya()
 
   return { 
     yagya, 

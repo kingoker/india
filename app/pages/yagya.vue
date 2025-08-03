@@ -49,20 +49,7 @@ fetchYagyaInfo()
 // Инициализируем проверку администратора
 initAdminCheck()
 
-// Отладка данных ягьи
-watch(yagya, (newYagya) => {
-  console.log('Данные ягьи загружены:', newYagya)
-}, { immediate: true })
 
-// Отладка информации о ягья
-watch(yagyaInfo, (newInfo) => {
-  console.log('Информация о ягья загружена:', newInfo)
-}, { immediate: true })
-
-// Отладка статуса администратора
-watch(isAdmin, (newStatus) => {
-  console.log('Статус администратора изменился:', newStatus)
-}, { immediate: true })
 
 
 
@@ -81,14 +68,12 @@ const filteredCategories = computed(() => {
 
 // Обработчики формы бронирования
 const openBookingForm = (yagyaId, yagyaTitle) => {
-  console.log('Открываем форму бронирования:', { yagyaId, yagyaTitle })
   bookingForm.value = {
     isOpen: true,
     itemId: yagyaId,
     itemTitle: yagyaTitle,
     itemType: 'yagya'
   }
-  console.log('Состояние формы после открытия:', bookingForm.value)
 }
 
 const closeBookingForm = () => {
@@ -97,7 +82,6 @@ const closeBookingForm = () => {
 
 const handleBookingSubmit = async (bookingData) => {
   try {
-    console.log('Получены данные из формы:', bookingData)
     // Отправляем заявку через composable
     await submitBooking(bookingData)
     
@@ -149,18 +133,15 @@ const handleCategoryAdded = (newCategory) => {
 
 const confirmDeleteCategory = (category) => {
   if (confirm(`Вы уверены, что хотите удалить категорию "${category.name}"? Это действие нельзя отменить.`)) {
-    console.log('Удаляем категорию:', category)
     deleteCategory(category.id)
   }
 }
 
 const deleteCategory = async (categoryId) => {
   try {
-    console.log('Удаляем категорию с ID:', categoryId)
     const supabase = useSupabaseClient()
     
     // Проверяем, что категория существует
-    console.log('Проверяем существование категории...')
     const { data: existingCategory, error: checkError } = await supabase
       .from('categories')
       .select('*')
@@ -173,17 +154,12 @@ const deleteCategory = async (categoryId) => {
       return
     }
 
-    console.log('Категория найдена:', existingCategory)
-    
     // Удаляем только саму категорию
-    console.log('Отправляем запрос на удаление...')
     const { data, error: deleteCategoryError, count } = await supabase
       .from('categories')
       .delete()
       .eq('id', categoryId)
       .select()
-
-    console.log('Результат удаления:', { data, error: deleteCategoryError, count })
 
     if (deleteCategoryError) {
       console.error('Ошибка удаления категории:', deleteCategoryError)
@@ -192,7 +168,6 @@ const deleteCategory = async (categoryId) => {
       console.error('Категория не была удалена - нет данных в ответе')
       alert('Ошибка удаления категории: запись не найдена или не удалена')
     } else {
-      console.log('Категория удалена успешно:', data)
       // Обновляем список категорий
       fetchYagya()
     }
@@ -608,7 +583,7 @@ const deleteYagyaInfo = async (infoId) => {
                         </span>
                       </div>
                       <button 
-                        @click="() => { console.log('Клик по кнопке, item:', item); openBookingForm(item.id, item.title) }"
+                        @click="() => openBookingForm(item.id, item.title)"
                         class="w-full mt-4 px-[30px] py-[15px] bg-white/30 border border-white rounded-full text-white text-[14.5px] md:text-[29px] font-montserrat font-bold transition-colors duration-200 hover:bg-white/50 tracking-wide"
                       >
                         ЗАБРОНИРОВАТЬ МЕСТО
@@ -686,7 +661,7 @@ const deleteYagyaInfo = async (infoId) => {
                         </span>
                       </div>
                       <button 
-                        @click="() => { console.log('Клик по кнопке, item:', item); openBookingForm(item.id, item.title) }"
+                        @click="() => openBookingForm(item.id, item.title)"
                         class="w-full mt-4 px-[30px] py-[15px] bg-white/30 border border-white rounded-full text-white text-[14.5px] md:text-[29px] font-montserrat font-bold transition-colors duration-200 hover:bg-white/50 tracking-wide"
                       >
                         ЗАБРОНИРОВАТЬ МЕСТО

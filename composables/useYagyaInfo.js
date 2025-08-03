@@ -21,7 +21,7 @@ export const useYagyaInfo = () => {
       }
       
       yagyaInfo.value = data || []
-      console.log('Информация о ягья загружена:', yagyaInfo.value)
+  
     } catch (err) {
       console.error('Ошибка загрузки информации о ягья:', err)
       error.value = err.message

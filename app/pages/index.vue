@@ -1,11 +1,14 @@
 <template>
   <div class="flex items-center justify-center min-h-screen">
-    <h1 class="text-3xl font-bold">Главная страница</h1>
+    <h1 class="text-3xl font-bold">Загрузка...</h1>
   </div>
 </template>
 <script setup>
-definePageMeta({
-  redirect: '/tours'
+import { onMounted } from 'vue'
+
+// Перенаправляем на страницу туров при загрузке
+onMounted(() => {
+  navigateTo('/tours')
 })
 </script>
   

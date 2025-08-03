@@ -29,7 +29,6 @@ export function useTourDetails() {
         throw detailsError
       }
       
-      console.log('Tour details loaded:', detailsData)
       tourDetails.value = detailsData
       
       // Загружаем дополнительную информацию о туре

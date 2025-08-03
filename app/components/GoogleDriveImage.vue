@@ -3,6 +3,8 @@
     :src="currentSrc"
     :alt="alt"
     :class="imgClass"
+    loading="lazy"
+    decoding="async"
     @error="handleImageError"
     @load="handleImageLoad"
     v-bind="$attrs"

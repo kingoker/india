@@ -27,7 +27,6 @@ const isLoading = ref(false)
 const handleLogout = async () => {
   try {
     isLoading.value = true
-    console.log('Logging out...')
     
     const { error } = await supabase.auth.signOut()
     
@@ -35,7 +34,6 @@ const handleLogout = async () => {
       console.error('Logout error:', error)
       alert('Ошибка при выходе: ' + error.message)
     } else {
-      console.log('Logout successful')
       // Обновляем статус админа
       const { checkAdminStatus } = useAdminCheck()
       await checkAdminStatus()

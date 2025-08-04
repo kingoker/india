@@ -68,7 +68,7 @@ export function useTours() {
       // Оптимизированный запрос с селектом только нужных полей
       const { data, error: err } = await supabase
         .from('tours')
-        .select('id, title, description, date_from, date_to, image_url, slug, duration')
+        .select('id, title, description, date_from, date_to, image_url, slug')
         .order('date_from', { ascending: true })
         .limit(50) // Ограничиваем количество записей
       

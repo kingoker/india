@@ -22,7 +22,7 @@ export default defineNuxtConfig({
   
   // Оптимизация для быстрой загрузки
   experimental: {
-    payloadExtraction: false
+    payloadExtraction: true
   },
 
   vite: {
@@ -55,7 +55,16 @@ export default defineNuxtConfig({
   },
 
   nitro: {
-    preset: 'node',
+    preset: 'node-listener',
+    compressPublicAssets: true,
+    minify: true,
+    storage: {
+      // Опционально: Redis для кэширования
+      // redis: {
+      //   driver: 'redis',
+      //   url: process.env.REDIS_URL
+      // }
+    }
   },
 
   supabase: {
@@ -71,6 +80,8 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     telegramBotToken: process.env.TELEGRAM_BOT_TOKEN,
+    supabaseUrl: process.env.SUPABASE_URL,
+    supabaseKey: process.env.SUPABASE_KEY,
     public: {
       telegramChatIds: process.env.TELEGRAM_CHAT_IDS?.split(',') || []
     }

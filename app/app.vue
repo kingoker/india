@@ -58,13 +58,15 @@ onMounted(async () => {
   }
   
   // Дополнительная проверка через window.location
-  const urlParams = new URLSearchParams(window.location.search)
-  if (urlParams.has('admin')) {
-    openAdminPopup()
-    // Удаляем параметр из URL
-    urlParams.delete('admin')
-    const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '')
-    window.history.replaceState({}, '', newUrl)
+  if (process.client) {
+    const urlParams = new URLSearchParams(window.location.search)
+    if (urlParams.has('admin')) {
+      openAdminPopup()
+      // Удаляем параметр из URL
+      urlParams.delete('admin')
+      const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '')
+      window.history.replaceState({}, '', newUrl)
+    }
   }
 })
 </script>

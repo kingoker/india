@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted, watch } from 'vue'
+import { disableScroll, enableScroll, addEventListener, removeEventListener } from '../../utils/domUtils'
 
 const props = defineProps({
   itemId: {
@@ -102,17 +103,7 @@ const handleSubmit = () => {
   loading.value = false
 }
 
-// Функция для блокировки скролла
-const disableScroll = () => {
-  document.body.style.overflow = 'hidden'
-  document.body.style.paddingRight = '0px'
-}
 
-// Функция для разблокировки скролла
-const enableScroll = () => {
-  document.body.style.overflow = ''
-  document.body.style.paddingRight = ''
-}
 
 // Обработчик клавиши Escape
 const handleEscape = (event) => {
@@ -125,17 +116,17 @@ const handleEscape = (event) => {
 watch(() => props.isOpen, (isOpen) => {
   if (isOpen) {
     disableScroll()
-    document.addEventListener('keydown', handleEscape)
+    addEventListener('keydown', handleEscape)
   } else {
     enableScroll()
-    document.removeEventListener('keydown', handleEscape)
+    removeEventListener('keydown', handleEscape)
   }
 }, { immediate: true })
 
 // Очистка при размонтировании
 onUnmounted(() => {
   enableScroll()
-  document.removeEventListener('keydown', handleEscape)
+  removeEventListener('keydown', handleEscape)
 })
 
 const handleClose = () => {

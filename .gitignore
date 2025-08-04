@@ -5,6 +5,9 @@
 .nitro
 .cache
 dist
+# Исключаем все папки сборки
+.nuxt/
+.output/
 
 # Node dependencies
 node_modules

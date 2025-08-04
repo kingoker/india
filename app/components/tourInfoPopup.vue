@@ -38,6 +38,7 @@
 import { onMounted, onUnmounted } from 'vue'
 import FormattedText from './FormattedText.vue'
 import GoogleDriveImage from './GoogleDriveImage.vue'
+import { disableScroll, enableScroll, addEventListener, removeEventListener } from '../../utils/domUtils'
 
 const props = defineProps({
   title: String,
@@ -47,17 +48,7 @@ const props = defineProps({
 
 const emit = defineEmits(['close'])
 
-// Функция для блокировки скролла
-const disableScroll = () => {
-  document.body.style.overflow = 'hidden'
-  document.body.style.paddingRight = '0px' // Компенсация для скроллбара
-}
 
-// Функция для разблокировки скролла
-const enableScroll = () => {
-  document.body.style.overflow = ''
-  document.body.style.paddingRight = ''
-}
 
 // Обработчик клавиши Escape
 const handleEscape = (event) => {
@@ -70,14 +61,14 @@ const handleEscape = (event) => {
 onMounted(() => {
   disableScroll()
   // Добавляем обработчик клавиши Escape
-  document.addEventListener('keydown', handleEscape)
+  addEventListener('keydown', handleEscape)
 })
 
 // Разблокируем скролл при размонтировании компонента
 onUnmounted(() => {
   enableScroll()
   // Удаляем обработчик клавиши Escape
-  document.removeEventListener('keydown', handleEscape)
+  removeEventListener('keydown', handleEscape)
 })
 </script>
 

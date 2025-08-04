@@ -7,6 +7,12 @@ import TourCardSkeleton from '../../components/TourCardSkeleton.vue'
 
 const route = useRoute()
 const { tours, loading, error, fetchTours } = useTours()
+
+// Проверяем, что мы в браузере
+const isClient = ref(false)
+onMounted(() => {
+  isClient.value = true
+})
 const { isAdmin, initAdminCheck } = useAdminCheck()
 const user = useSupabaseUser()
 const defaultImage = 'https://cdn.tripzaza.com/ru/destinations/wp-content/uploads/2017/04/India-1-Taj-Mahal-e1492124232509.jpg'
@@ -45,7 +51,7 @@ onMounted(async () => {
   await initAdminCheck()
   
   // Настраиваем Intersection Observer для ленивой загрузки
-  if ('IntersectionObserver' in window) {
+  if (isClient.value && 'IntersectionObserver' in window) {
     observer.value = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -74,7 +80,7 @@ onUnmounted(() => {
 
 // Функция для наблюдения за карточками туров
 const observeTourCards = () => {
-  if (observer.value) {
+  if (observer.value && isClient.value) {
     nextTick(() => {
       const cards = document.querySelectorAll('[data-tour-id]')
       cards.forEach(card => {

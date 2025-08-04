@@ -52,6 +52,7 @@
 
 <script setup>
 import { ref, watch, onUnmounted, onMounted } from 'vue'
+import { disableScroll, enableScroll, addEventListener, removeEventListener } from '~/utils/domUtils'
 
 const props = defineProps({
   isOpen: {
@@ -138,19 +139,20 @@ const handleKeydown = (event) => {
 // Добавляем обработчик при открытии попапа
 watch(() => props.isOpen, (isOpen) => {
   if (isOpen) {
-    document.addEventListener('keydown', handleKeydown)
+    addEventListener('keydown', handleKeydown)
     // Блокируем скролл страницы
-    document.body.style.overflow = 'hidden'
+    disableScroll()
   } else {
-    document.removeEventListener('keydown', handleKeydown)
+    removeEventListener('keydown', handleKeydown)
     // Восстанавливаем скролл страницы
-    document.body.style.overflow = ''
+    enableScroll()
   }
 })
 
 // Очищаем обработчик при размонтировании
 onUnmounted(() => {
-  document.removeEventListener('keydown', handleKeydown)
-  document.body.style.overflow = ''
+  removeEventListener('keydown', handleKeydown)
+  // Восстанавливаем скролл страницы
+  enableScroll()
 })
 </script> 

@@ -100,6 +100,7 @@
 </template>
 
 <script setup>
+import { disableScroll, enableScroll, addEventListener, removeEventListener } from '~/utils/domUtils'
 import { ref, watch, onUnmounted } from 'vue'
 import { useTourDetails } from '../../composables/useTourDetails'
 import RichTextEditor from './RichTextEditor.vue'
@@ -141,16 +142,16 @@ const form = ref({
 // Функция для блокировки скролла
 const disableScroll = () => {
   if (typeof document !== 'undefined') {
-    document.body.style.overflow = 'hidden'
-    document.body.style.paddingRight = '0px'
+    disableScroll()
+    disableScroll()
   }
 }
 
 // Функция для разблокировки скролла
 const enableScroll = () => {
   if (typeof document !== 'undefined') {
-    document.body.style.overflow = ''
-    document.body.style.paddingRight = ''
+    enableScroll()
+    enableScroll()
   }
 }
 
@@ -165,7 +166,7 @@ const handleEscape = (event) => {
 watch(() => props.isOpen, (isOpen) => {
   if (isOpen) {
     disableScroll()
-    document.addEventListener('keydown', handleEscape)
+    addEventListener('keydown', handleEscape)
     
     // Инициализируем форму в зависимости от секции и типа редактирования
     if (props.editingDetails) {
@@ -205,14 +206,14 @@ watch(() => props.isOpen, (isOpen) => {
     }
   } else {
     enableScroll()
-    document.removeEventListener('keydown', handleEscape)
+    removeEventListener('keydown', handleEscape)
   }
 }, { immediate: true })
 
 // Очистка при размонтировании
 onUnmounted(() => {
   enableScroll()
-  document.removeEventListener('keydown', handleEscape)
+  removeEventListener('keydown', handleEscape)
 })
 
 const handleSubmit = async () => {

@@ -108,6 +108,7 @@
 </template>
 
 <script setup>
+import { disableScroll, enableScroll, addEventListener, removeEventListener } from '~/utils/domUtils'
 import { ref, watch, onUnmounted } from 'vue'
 import { processImageUrl } from '../../utils/googleDriveUtils.js'
 
@@ -139,17 +140,9 @@ const form = ref({
   is_active: true
 })
 
-// Функция для блокировки скролла
-const disableScroll = () => {
-  document.body.style.overflow = 'hidden'
-  document.body.style.paddingRight = '0px'
-}
 
-// Функция для разблокировки скролла
-const enableScroll = () => {
-  document.body.style.overflow = ''
-  document.body.style.paddingRight = ''
-}
+
+
 
 // Обработчик клавиши Escape
 const handleEscape = (event) => {
@@ -162,7 +155,7 @@ const handleEscape = (event) => {
 watch(() => props.isOpen, (newVal) => {
   if (newVal) {
     disableScroll()
-    document.addEventListener('keydown', handleEscape)
+    addEventListener('keydown', handleEscape)
     
     if (props.editingImage) {
       // Редактирование существующего изображения
@@ -184,14 +177,14 @@ watch(() => props.isOpen, (newVal) => {
     success.value = ''
   } else {
     enableScroll()
-    document.removeEventListener('keydown', handleEscape)
+    removeEventListener('keydown', handleEscape)
   }
 }, { immediate: true })
 
 // Очистка при размонтировании
 onUnmounted(() => {
   enableScroll()
-  document.removeEventListener('keydown', handleEscape)
+  removeEventListener('keydown', handleEscape)
 })
 
 const handleSubmit = async () => {

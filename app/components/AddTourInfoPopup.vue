@@ -128,21 +128,9 @@ const form = ref({
   sort_order: 0
 })
 
-// Функция для блокировки скролла
-const disableScroll = () => {
-  if (typeof document !== 'undefined') {
-    disableScroll()
-    disableScroll()
-  }
-}
 
-// Функция для разблокировки скролла
-const enableScroll = () => {
-  if (typeof document !== 'undefined') {
-    enableScroll()
-    enableScroll()
-  }
-}
+
+
 
 // Обработчик клавиши Escape
 const handleEscape = (event) => {

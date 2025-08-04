@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
       // Загружаем туры
       supabase
         .from('tours')
-        .select('id, title, description, date_from, date_to, image_url, slug, price, duration')
+        .select('id, title, description, date_from, date_to, image_url, slug, duration')
         .order('date_from', { ascending: true })
         .limit(20),
       

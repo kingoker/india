@@ -169,14 +169,15 @@ const deleteTour = async (tourId) => {
 
   <section class="flex justify-center px-2 sm:px-4 md:px-[50px] mb-16">
     <div v-if="error" class="text-center text-red-500 py-8">Ошибка: {{ error.message }}</div>
-    <div v-else class="flex flex-wrap gap-y-[50px] gap-x-[50px] justify-center w-full max-w-[1290px] mx-auto">
-      <!-- Скелетоны во время загрузки -->
-      <template v-if="loading">
-        <TourCardSkeleton v-for="i in 6" :key="`skeleton-${i}`" />
-      </template>
-      
-      <!-- Реальные карточки после загрузки -->
-      <template v-else>
+    <ClientOnly>
+      <div v-if="!error" class="flex flex-wrap gap-y-[50px] gap-x-[50px] justify-center w-full max-w-[1290px] mx-auto">
+        <!-- Скелетоны во время загрузки -->
+        <template v-if="loading">
+          <TourCardSkeleton v-for="i in 6" :key="`skeleton-${i}`" />
+        </template>
+        
+        <!-- Реальные карточки после загрузки -->
+        <template v-else>
         <!-- Отладочная информация -->
         <div v-if="!sortedTours || sortedTours.length === 0" class="w-full text-center text-gray-500">
           Нет доступных туров
@@ -263,6 +264,12 @@ const deleteTour = async (tourId) => {
         </div>
       </template>
     </div>
+      <template #fallback>
+        <div class="flex flex-wrap gap-y-[50px] gap-x-[50px] justify-center w-full max-w-[1290px] mx-auto">
+          <div class="relative rounded-[32px] overflow-hidden bg-gray-200 w-full min-h-[600px] max-w-[calc(100vw-32px)] mx-auto p-3 sm:p-4 md:p-6 lg:p-8 md:min-w-[400px] md:max-w-[500px] md:min-h-[595px] md:max-h-[595px] lg:min-w-[595px] lg:max-w-[595px] lg:min-h-[595px] lg:max-h-[595px] flex flex-col justify-end block"></div>
+        </div>
+      </template>
+    </ClientOnly>
   </section>
 
   <!-- Попап добавления тура -->

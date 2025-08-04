@@ -445,12 +445,10 @@
     <div v-if="fullscreenImage !== null && tourImages && tourImages[fullscreenImage]" class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 cursor-zoom-out" @click="closeImage">
       <GoogleDriveImage 
         :src="tourImages[fullscreenImage].image_url" 
-        class="max-w-full max-h-full rounded-[60px] shadow-2xl" 
-        width="900" 
-        height="900" 
+        class="max-w-[95vw] max-h-[95vh] w-auto h-auto object-contain rounded-[20px] shadow-2xl" 
         :alt="tourImages[fullscreenImage].title || `Фото ${fullscreenImage+1}`" 
       />
-      <button class="absolute top-6 right-6 text-white text-4xl font-bold bg-black/50 rounded-full w-14 h-14 flex items-center justify-center" @click.stop="closeImage">&times;</button>
+      <button class="absolute top-6 right-6 text-white text-4xl font-bold bg-black/50 rounded-full w-14 h-14 flex items-center justify-center hover:bg-black/70 transition-colors duration-200" @click.stop="closeImage">&times;</button>
     </div>
     
     <!-- Форма бронирования -->
@@ -514,7 +512,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import tourInfoPopup from '../../components/tourInfoPopup.vue'
 import { Collapse } from 'vue-collapsed'
@@ -909,12 +907,26 @@ const galleryImages = computed(() => {
   return tourImages.value.map(image => image.image_url)
 })
 const fullscreenImage = ref(null)
+
 function openImage(idx) { 
   if (idx >= 0 && idx < galleryImages.value.length) {
     fullscreenImage.value = idx 
+    // Добавляем обработчик клавиши Escape
+    document.addEventListener('keydown', handleEscapeKey)
   }
 }
-function closeImage() { fullscreenImage.value = null }
+
+function closeImage() { 
+  fullscreenImage.value = null 
+  // Удаляем обработчик клавиши Escape
+  document.removeEventListener('keydown', handleEscapeKey)
+}
+
+function handleEscapeKey(event) {
+  if (event.key === 'Escape') {
+    closeImage()
+  }
+}
 const hoveredBtn = ref(false)
 
 // Функции для работы с формой бронирования
@@ -951,6 +963,11 @@ const handleBookingSubmit = async (bookingData) => {
 }
 
 // Функции для работы с детальной информацией о туре будут добавлены позже
+
+// Очистка обработчиков при размонтировании компонента
+onUnmounted(() => {
+  document.removeEventListener('keydown', handleEscapeKey)
+})
 </script>
 
 <style scoped>

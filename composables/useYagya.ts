@@ -7,13 +7,63 @@ export function useYagya() {
   const loading = ref(true)
   const error = ref<string | null>(null)
   const lastFetch = ref<number>(0)
-  const CACHE_DURATION = 5 * 60 * 1000 // 5 минут
+  const CACHE_DURATION = 30 * 60 * 1000 // 30 минут
+
+  // Кэширование в localStorage
+  const YAGYA_CACHE_KEY = 'yagya_data_cache'
+  const YAGYA_CACHE_TIMESTAMP_KEY = 'yagya_data_timestamp'
+  const CATEGORIES_CACHE_KEY = 'yagya_categories_cache'
+  const CATEGORIES_CACHE_TIMESTAMP_KEY = 'yagya_categories_timestamp'
+
+  const getCachedData = (key: string, timestampKey: string) => {
+    if (process.client) {
+      try {
+        const cached = localStorage.getItem(key)
+        const timestamp = localStorage.getItem(timestampKey)
+        
+        if (cached && timestamp) {
+          const age = Date.now() - parseInt(timestamp)
+          if (age < CACHE_DURATION) {
+            return JSON.parse(cached)
+          }
+        }
+      } catch (e) {
+        console.warn('Ошибка чтения кэша:', e)
+      }
+    }
+    return null
+  }
+
+  const setCachedData = (key: string, timestampKey: string, data: any) => {
+    if (process.client) {
+      try {
+        localStorage.setItem(key, JSON.stringify(data))
+        localStorage.setItem(timestampKey, Date.now().toString())
+      } catch (e) {
+        console.warn('Ошибка записи кэша:', e)
+      }
+    }
+  }
 
   const fetchYagya = async (filters?: YagyaFilters, force = false) => {
-    // Проверяем кэш
+    // Проверяем кэш в памяти
     const now = Date.now()
     if (!force && yagya.value.length > 0 && (now - lastFetch.value) < CACHE_DURATION) {
       return
+    }
+
+    // Проверяем localStorage кэш
+    if (!force && process.client) {
+      const cachedYagya = getCachedData(YAGYA_CACHE_KEY, YAGYA_CACHE_TIMESTAMP_KEY)
+      const cachedCategories = getCachedData(CATEGORIES_CACHE_KEY, CATEGORIES_CACHE_TIMESTAMP_KEY)
+      
+      if (cachedYagya && cachedCategories) {
+        yagya.value = cachedYagya
+        categories.value = cachedCategories
+        lastFetch.value = now
+        loading.value = false
+        return
+      }
     }
     
     loading.value = true
@@ -21,10 +71,10 @@ export function useYagya() {
     try {
       const supabase = useSupabaseClient()
       
-      // Загружаем категории
+      // Загружаем категории с оптимизацией
       const { data: categoriesData, error: categoriesError } = await supabase
         .from('categories')
-        .select('*')
+        .select('id, name, slug, description, color, icon, sort_order, is_active')
         .eq('is_active', true)
         .order('sort_order', { ascending: true })
       
@@ -34,16 +84,17 @@ export function useYagya() {
       
       categories.value = categoriesData || []
       
-      // Загружаем ягьи с категориями
+      // Загружаем ягьи с оптимизацией
       let query = supabase
         .from('yagya')
         .select(`
-          *,
+          id, title, description, date_from, date_to, time, image_url, is_featured, created_at, updated_at,
           yagya_categories(
-            category:categories(*)
+            category:categories(id, name, slug, color, icon)
           )
         `)
         .order('created_at', { ascending: false })
+        .limit(100) // Ограничиваем количество записей
       
       // Применяем фильтры
       if (filters?.category_slug) {
@@ -77,6 +128,10 @@ export function useYagya() {
       
       yagya.value = transformedYagya
       lastFetch.value = now
+      
+      // Кэшируем в localStorage
+      setCachedData(YAGYA_CACHE_KEY, YAGYA_CACHE_TIMESTAMP_KEY, transformedYagya)
+      setCachedData(CATEGORIES_CACHE_KEY, CATEGORIES_CACHE_TIMESTAMP_KEY, categoriesData)
       
     } catch (err) {
       console.error('Ошибка загрузки ягьи:', err)
@@ -224,8 +279,6 @@ export function useYagya() {
   const formatYagyaTime = (time: string) => {
     return time.slice(0, 5) // Возвращаем только часы и минуты (HH:MM)
   }
-
-
 
   // Загружаем данные сразу при создании composable
   fetchYagya()

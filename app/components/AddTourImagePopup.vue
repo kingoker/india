@@ -108,7 +108,7 @@
 </template>
 
 <script setup>
-import { disableScroll, enableScroll, addEventListener, removeEventListener } from '~/utils/domUtils'
+import { disableScroll, enableScroll, addEventListener, removeEventListener } from '../../utils/domUtils'
 import { ref, watch, onUnmounted } from 'vue'
 import { processImageUrl } from '../../utils/googleDriveUtils.js'
 

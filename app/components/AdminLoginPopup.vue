@@ -52,7 +52,7 @@
 
 <script setup>
 import { ref, watch, onUnmounted, onMounted } from 'vue'
-import { disableScroll, enableScroll, addEventListener, removeEventListener } from '~/utils/domUtils'
+import { disableScroll, enableScroll, addEventListener, removeEventListener } from '../../utils/domUtils'
 
 const props = defineProps({
   isOpen: {

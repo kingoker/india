@@ -96,7 +96,7 @@
 </template>
 
 <script setup>
-import { disableScroll, enableScroll, addEventListener, removeEventListener } from '~/utils/domUtils'
+import { disableScroll, enableScroll, addEventListener, removeEventListener } from '../../utils/domUtils'
 import { ref, watch, computed, onUnmounted } from 'vue'
 import RichTextEditor from './RichTextEditor.vue'
 import { useTourDetails } from '../../composables/useTourDetails'

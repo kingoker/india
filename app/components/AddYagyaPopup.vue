@@ -168,7 +168,7 @@
 <script setup>
 import { ref, watch, onUnmounted } from 'vue'
 import { processImageUrl } from '../../utils/googleDriveUtils.js'
-import { disableScroll, enableScroll, addEventListener, removeEventListener } from '~/utils/domUtils'
+import { disableScroll, enableScroll, addEventListener, removeEventListener } from '../../utils/domUtils'
 
 const props = defineProps({
   isOpen: {

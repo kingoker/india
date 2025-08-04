@@ -516,7 +516,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import tourInfoPopup from '~/components/tourInfoPopup.vue'
+import tourInfoPopup from '../../components/tourInfoPopup.vue'
 import { Collapse } from 'vue-collapsed'
 import { useBookingSubmit } from '../../../composables/useBookingSubmit.js'
 import { useTourDetails } from '../../../composables/useTourDetails'

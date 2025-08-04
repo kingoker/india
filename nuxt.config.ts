@@ -18,7 +18,12 @@ export default defineNuxtConfig({
     dirs: ['composables'],
   },
 
-  ssr: false,
+  ssr: true,
+  
+  // Оптимизация для быстрой загрузки
+  experimental: {
+    payloadExtraction: false
+  },
 
   vite: {
     server: {
@@ -42,6 +47,10 @@ export default defineNuxtConfig({
           additionalData: '@import "@/assets/styles/variables.scss";'
         }
       }
+    },
+    // Оптимизация для быстрой загрузки
+    optimizeDeps: {
+      include: ['vue', 'vue-router', '@supabase/supabase-js']
     }
   },
 
@@ -71,12 +80,10 @@ export default defineNuxtConfig({
   app: {
     head: {
       link: [
-        // Предзагрузка критических ресурсов
-        { rel: 'preload', href: 'https://wnfudwbexanzlzarfwtf.supabase.co/storage/v1/object/public/assets//tours%20banner.png', as: 'image' },
-        { rel: 'preload', href: 'https://wnfudwbexanzlzarfwtf.supabase.co/storage/v1/object/public/assets//arrow.svg', as: 'image' },
         // DNS prefetch для внешних ресурсов
         { rel: 'dns-prefetch', href: 'https://wnfudwbexanzlzarfwtf.supabase.co' },
-        { rel: 'dns-prefetch', href: 'https://saletur.ru' }
+        { rel: 'dns-prefetch', href: 'https://saletur.ru' },
+        { rel: 'dns-prefetch', href: 'https://cdn.tripzaza.com' }
       ],
       meta: [
         // Оптимизация для мобильных устройств

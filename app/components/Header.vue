@@ -7,7 +7,12 @@
       <!-- Логотип -->
       <div class="flex items-center h-full">
         <NuxtLink to="/">
-          <img src="https://wnfudwbexanzlzarfwtf.supabase.co/storage/v1/object/public/assets//main%20logo.svg" alt="Логотип" class="h-[64px] w-[64px] object-contain" />
+          <img 
+            src="https://wnfudwbexanzlzarfwtf.supabase.co/storage/v1/object/public/assets//main%20logo.svg" 
+            alt="Логотип" 
+            class="h-[64px] w-[64px] object-contain"
+            loading="eager"
+          />
         </NuxtLink>
       </div>
       <!-- Навигация -->

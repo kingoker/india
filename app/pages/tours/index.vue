@@ -6,8 +6,6 @@ import GoogleDriveImage from '../../components/GoogleDriveImage.vue'
 import TourCardSkeleton from '../../components/TourCardSkeleton.vue'
 
 const route = useRoute()
-console.log('Текущий маршрут:', route.path)
-console.log('Полный URL:', window.location.href)
 const { tours, loading, error, fetchTours } = useTours()
 const { isAdmin, initAdminCheck } = useAdminCheck()
 const user = useSupabaseUser()
@@ -43,7 +41,6 @@ const observer = ref(null)
 
 // Инициализация при загрузке страницы
 onMounted(async () => {
-  console.log('Страница туров загружена')
   // Инициализируем проверку админа
   await initAdminCheck()
   
@@ -216,7 +213,14 @@ const deleteTour = async (tourId) => {
             draggable="false"
           />
           <span class="absolute top-4 right-4 z-20 transition-all duration-300 opacity-60 group-hover:opacity-100">
-            <img src="https://wnfudwbexanzlzarfwtf.supabase.co/storage/v1/object/public/assets//arrow.svg" alt="arrow" width="55" height="55" draggable="false" />
+            <img 
+              src="https://wnfudwbexanzlzarfwtf.supabase.co/storage/v1/object/public/assets//arrow.svg" 
+              alt="arrow" 
+              width="55" 
+              height="55" 
+              draggable="false"
+              loading="lazy"
+            />
           </span>
           <div class="absolute bottom-0 left-0 w-full h-3/5 bg-gradient-to-t from-black/95 to-transparent z-10"></div>
           

@@ -5,14 +5,12 @@ export function useTours() {
   const loading = ref(true)
   const error = ref<any>(null)
   const lastFetch = ref<number>(0)
-  const CACHE_DURATION = 5 * 60 * 1000 // 5 минут
+  const CACHE_DURATION = 10 * 60 * 1000 // 10 минут для лучшего кэширования
 
   const fetchTours = async (force = false) => {
-    console.log('Загружаем туры...')
     // Проверяем кэш
     const now = Date.now()
     if (!force && tours.value.length > 0 && (now - lastFetch.value) < CACHE_DURATION) {
-      console.log('Используем кэшированные туры')
       return
     }
     
@@ -26,7 +24,6 @@ export function useTours() {
       console.error('Ошибка загрузки туров:', err)
       error.value = err
     } else {
-      console.log('Туры загружены:', data?.length || 0)
       tours.value = Array.isArray(data) ? data : []
       lastFetch.value = now
     }

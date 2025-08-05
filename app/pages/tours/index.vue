@@ -104,17 +104,22 @@ const closeAddTourPopup = () => {
   isAddTourPopupOpen.value = false
 }
 
-const handleTourAdded = (newTour) => {
-  // Обновляем список туров после добавления
-  fetchTours()
+const handleTourAdded = async (newTour) => {
+  console.log('Тур добавлен:', newTour)
+  // Принудительно обновляем список туров после добавления
+  await fetchTours(true) // force = true для принудительного обновления из БД
+  await nextTick()
 }
 
-const handleTourEdited = (editedTour) => {
-  // Обновляем список туров после редактирования
-  fetchTours()
+const handleTourEdited = async (editedTour) => {
+  console.log('Тур отредактирован:', editedTour)
+  // Принудительно обновляем список туров после редактирования
+  await fetchTours(true) // force = true для принудительного обновления из БД
+  await nextTick()
 }
 
 const openEditTourPopup = (tour) => {
+  console.log('Открываем попап редактирования для тура:', tour)
   editingTour.value = tour
   isEditTourPopupOpen.value = true
 }
@@ -141,8 +146,10 @@ const deleteTour = async (tourId) => {
     if (error) {
       alert('Ошибка удаления тура: ' + error.message)
     } else {
-      // Обновляем список туров после удаления
-      fetchTours()
+      console.log('Тур удален с ID:', tourId)
+      // Принудительно обновляем список туров после удаления
+      await fetchTours(true) // force = true для принудительного обновления из БД
+      await nextTick()
     }
   } catch (err) {
     alert('Ошибка удаления тура')

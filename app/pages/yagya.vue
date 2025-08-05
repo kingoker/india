@@ -47,7 +47,9 @@ fetchYagya()
 fetchYagyaInfo()
 
 // Инициализируем проверку администратора
-initAdminCheck()
+onMounted(async () => {
+  await initAdminCheck()
+})
 
 
 
@@ -102,9 +104,10 @@ const closeAddYagyaInfoPopup = () => {
   isAddYagyaInfoPopupOpen.value = false
 }
 
-const handleYagyaInfoAdded = (newInfo) => {
-  // Обновляем список информации о ягья
-  fetchYagyaInfo()
+const handleYagyaInfoAdded = async (newInfo) => {
+  // Принудительно обновляем список информации о ягья
+  await fetchYagyaInfo()
+  await nextTick()
 }
 
 // Состояние для редактирования
@@ -126,9 +129,12 @@ const openEditCategoryPopup = (category) => {
   isAddCategoryPopupOpen.value = true
 }
 
-const handleCategoryAdded = (newCategory) => {
-  // Обновляем список категорий
-  fetchYagya()
+const handleCategoryAdded = async (newCategory) => {
+  console.log('Категория добавлена:', newCategory)
+  // Принудительно обновляем список категорий
+  await fetchYagya({}, true) // force = true для принудительного обновления из БД
+  await getCategories()
+  await nextTick()
 }
 
 const confirmDeleteCategory = (category) => {
@@ -168,8 +174,11 @@ const deleteCategory = async (categoryId) => {
       console.error('Категория не была удалена - нет данных в ответе')
       alert('Ошибка удаления категории: запись не найдена или не удалена')
     } else {
-      // Обновляем список категорий
-      fetchYagya()
+      console.log('Категория удалена с ID:', categoryId)
+      // Принудительно обновляем список категорий
+      await fetchYagya({}, true) // force = true для принудительного обновления из БД
+      await getCategories()
+      await nextTick()
     }
   } catch (err) {
     console.error('Delete category error:', err)
@@ -192,9 +201,16 @@ const openEditYagyaPopup = (yagya) => {
   isAddYagyaPopupOpen.value = true
 }
 
-const handleYagyaAdded = (newYagya) => {
-  // Обновляем список ягья
-  fetchYagya()
+const handleYagyaAdded = async (newYagya) => {
+  console.log('Ягья добавлена:', newYagya)
+  // Принудительно обновляем список ягья
+  await fetchYagya({}, true) // force = true для принудительного обновления из БД
+  
+  // Также обновляем категории
+  await getCategories()
+  
+  // Небольшая задержка для обновления UI
+  await nextTick()
 }
 
 const confirmDeleteYagya = (yagya) => {
@@ -227,8 +243,11 @@ const deleteYagya = async (yagyaId) => {
     if (error) {
       alert('Ошибка удаления ягья: ' + error.message)
     } else {
-      // Обновляем список ягья
-      fetchYagya()
+      console.log('Ягья удалена с ID:', yagyaId)
+      // Принудительно обновляем список ягья
+      await fetchYagya({}, true) // force = true для принудительного обновления из БД
+      await getCategories()
+      await nextTick()
     }
   } catch (err) {
     alert('Ошибка удаления ягья')
@@ -246,9 +265,10 @@ const closeEditYagyaInfoPopup = () => {
   editingYagyaInfo.value = null
 }
 
-const handleYagyaInfoEdited = (editedInfo) => {
-  // Обновляем список информации о ягья
-  fetchYagyaInfo()
+const handleYagyaInfoEdited = async (editedInfo) => {
+  // Принудительно обновляем список информации о ягья
+  await fetchYagyaInfo()
+  await nextTick()
 }
 
 const confirmDeleteYagyaInfo = (info) => {
@@ -268,8 +288,9 @@ const deleteYagyaInfo = async (infoId) => {
     if (error) {
       alert('Ошибка удаления информации: ' + error.message)
     } else {
-      // Обновляем список информации о ягья
-      fetchYagyaInfo()
+      // Принудительно обновляем список информации о ягья
+      await fetchYagyaInfo()
+      await nextTick()
     }
   } catch (err) {
     alert('Ошибка удаления информации')

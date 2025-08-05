@@ -45,15 +45,110 @@ export function useYagya() {
     }
   }
 
+  const clearCache = () => {
+    if (process.client) {
+      try {
+        localStorage.removeItem(YAGYA_CACHE_KEY)
+        localStorage.removeItem(YAGYA_CACHE_TIMESTAMP_KEY)
+        localStorage.removeItem(CATEGORIES_CACHE_KEY)
+        localStorage.removeItem(CATEGORIES_CACHE_TIMESTAMP_KEY)
+        console.log('Кэш ягьи очищен')
+      } catch (e) {
+        console.warn('Ошибка очистки кэша ягьи:', e)
+      }
+    }
+  }
+
   const fetchYagya = async (filters?: YagyaFilters, force = false) => {
+    // Если force = true, игнорируем кэш и загружаем свежие данные
+    if (force) {
+      console.log('Принудительное обновление ягьи из БД')
+      loading.value = true
+      error.value = null
+      
+      try {
+        const supabase = useSupabaseClient()
+        
+        // Загружаем категории с оптимизацией
+        const { data: categoriesData, error: categoriesError } = await supabase
+          .from('categories')
+          .select('id, name, slug, description, color, icon, sort_order, is_active')
+          .eq('is_active', true)
+          .order('sort_order', { ascending: true })
+        
+        if (categoriesError) {
+          throw categoriesError
+        }
+        
+        categories.value = categoriesData || []
+        
+        // Загружаем ягьи с оптимизацией
+        let query = supabase
+          .from('yagya')
+          .select(`
+            id, title, description, date_from, date_to, time, image_url, is_featured, created_at, updated_at,
+            yagya_categories(
+              category:categories(id, name, slug, color, icon)
+            )
+          `)
+          .order('created_at', { ascending: false })
+          .limit(100) // Ограничиваем количество записей
+        
+        // Применяем фильтры
+        if (filters?.category_slug) {
+          query = query.eq('yagya_categories.category.slug', filters.category_slug)
+        }
+        
+        if (filters?.is_featured) {
+          query = query.eq('is_featured', true)
+        }
+        
+        const { data: yagyaData, error: yagyaError } = await query
+        
+        if (yagyaError) {
+          throw yagyaError
+        }
+        
+        // Преобразуем данные в нужный формат
+        const transformedYagya: YagyaWithCategories[] = (yagyaData || []).map((item: any) => ({
+          id: item.id,
+          title: item.title,
+          description: item.description,
+          date_from: item.date_from,
+          date_to: item.date_to,
+          time: item.time,
+          image_url: item.image_url,
+          is_featured: item.is_featured,
+          created_at: item.created_at,
+          updated_at: item.updated_at,
+          categories: item.yagya_categories?.filter((yc: any) => yc.category)?.map((yc: any) => yc.category) || []
+        }))
+        
+        yagya.value = transformedYagya
+        lastFetch.value = Date.now()
+        
+        // Обновляем кэш в localStorage
+        setCachedData(YAGYA_CACHE_KEY, YAGYA_CACHE_TIMESTAMP_KEY, transformedYagya)
+        setCachedData(CATEGORIES_CACHE_KEY, CATEGORIES_CACHE_TIMESTAMP_KEY, categoriesData)
+        
+        console.log('Ягья обновлена из БД:', transformedYagya.length, 'записей')
+      } catch (err) {
+        console.error('Ошибка загрузки ягьи:', err)
+        error.value = err instanceof Error ? err.message : 'Произошла ошибка при загрузке данных'
+      } finally {
+        loading.value = false
+      }
+      return
+    }
+
     // Проверяем кэш в памяти
     const now = Date.now()
-    if (!force && yagya.value.length > 0 && (now - lastFetch.value) < CACHE_DURATION) {
+    if (yagya.value.length > 0 && (now - lastFetch.value) < CACHE_DURATION) {
       return
     }
 
     // Проверяем localStorage кэш
-    if (!force && process.client) {
+    if (process.client) {
       const cachedYagya = getCachedData(YAGYA_CACHE_KEY, YAGYA_CACHE_TIMESTAMP_KEY)
       const cachedCategories = getCachedData(CATEGORIES_CACHE_KEY, CATEGORIES_CACHE_TIMESTAMP_KEY)
       
@@ -289,6 +384,7 @@ export function useYagya() {
     loading, 
     error, 
     fetchYagya, 
+    clearCache,
     getYagyaByCategory,
     getCategories,
     formatYagyaDate,

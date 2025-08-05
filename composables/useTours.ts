@@ -41,15 +41,64 @@ export function useTours() {
     }
   }
 
+  const clearCache = () => {
+    if (process.client) {
+      try {
+        localStorage.removeItem(CACHE_KEY)
+        localStorage.removeItem(CACHE_TIMESTAMP_KEY)
+        console.log('Кэш туров очищен')
+      } catch (e) {
+        console.warn('Ошибка очистки кэша:', e)
+      }
+    }
+  }
+
   const fetchTours = async (force = false) => {
+    // Если force = true, игнорируем кэш и загружаем свежие данные
+    if (force) {
+      console.log('Принудительное обновление туров из БД')
+      loading.value = true
+      error.value = null
+      
+      try {
+        const supabase = useSupabaseClient()
+        
+        // Оптимизированный запрос с селектом только нужных полей
+        const { data, error: err } = await supabase
+          .from('tours')
+          .select('id, title, description, date_from, date_to, image_url, slug')
+          .order('date_from', { ascending: true })
+          .limit(50) // Ограничиваем количество записей
+        
+        if (err) {
+          console.error('Ошибка загрузки туров:', err)
+          error.value = err
+        } else {
+          const toursData = Array.isArray(data) ? data : []
+          tours.value = toursData
+          lastFetch.value = Date.now()
+          
+          // Обновляем кэш в localStorage
+          setCachedData(toursData)
+          console.log('Туры обновлены из БД:', toursData.length, 'записей')
+        }
+      } catch (err) {
+        console.error('Ошибка загрузки туров:', err)
+        error.value = err
+      } finally {
+        loading.value = false
+      }
+      return
+    }
+
     // Проверяем кэш в памяти
     const now = Date.now()
-    if (!force && tours.value.length > 0 && (now - lastFetch.value) < CACHE_DURATION) {
+    if (tours.value.length > 0 && (now - lastFetch.value) < CACHE_DURATION) {
       return
     }
 
     // Проверяем localStorage кэш
-    if (!force && process.client) {
+    if (process.client) {
       const cached = getCachedData()
       if (cached) {
         tours.value = cached
@@ -94,5 +143,5 @@ export function useTours() {
   // Загружаем туры сразу при создании composable
   fetchTours()
 
-  return { tours, loading, error, fetchTours }
+  return { tours, loading, error, fetchTours, clearCache }
 } 

@@ -231,21 +231,6 @@ const handleSubmit = async () => {
                     return
                   }
                   
-                  // Проверяем, изменились ли данные
-                  const hasChanges = 
-                    existingTour.title !== formData.value.title ||
-                    existingTour.description !== formData.value.description ||
-                    existingTour.date_from !== formData.value.date_from ||
-                    existingTour.date_to !== formData.value.date_to ||
-                    existingTour.image_url !== formData.value.image_url ||
-                    existingTour.slug !== formData.value.slug
-                  
-                  if (!hasChanges) {
-                    success.value = 'Данные не изменились'
-                    result = existingTour
-                    return
-                  }
-                  
                   // Обрабатываем URL изображения
                   const processedImageUrl = processImageUrl(formData.value.image_url)
                   
@@ -259,6 +244,9 @@ const handleSubmit = async () => {
                     slug: formData.value.slug
                   }
                   
+                  console.log('Обновляем тур с ID:', props.editingTour.id)
+                  console.log('Данные для обновления:', updateData)
+                  
                   const { data, error: updateError } = await supabase
                     .from('tours')
                     .update(updateData)
@@ -266,8 +254,10 @@ const handleSubmit = async () => {
                     .select('*')
                 
                   if (updateError) {
+                    console.error('Ошибка обновления:', updateError)
                     error.value = 'Ошибка обновления тура: ' + updateError.message
                   } else if (!data || data.length === 0) {
+                    console.log('Нет данных после обновления, проверяем тур...')
                     // Проверяем, существует ли тур после обновления
                     const { data: checkData, error: checkError } = await supabase
                       .from('tours')
@@ -280,12 +270,17 @@ const handleSubmit = async () => {
                     } else if (checkData) {
                       success.value = 'Тур успешно обновлен!'
                       result = checkData
+                      // Закрываем попап сразу после успешного обновления
+                      emit('close')
                     } else {
                       error.value = 'Ошибка обновления тура: запись не найдена'
                     }
                   } else {
+                    console.log('Тур успешно обновлен:', data[0])
                     success.value = 'Тур успешно обновлен!'
                     result = data[0]
+                    // Закрываем попап сразу после успешного обновления
+                    emit('close')
                   }
     } else {
       // Обрабатываем URL изображения
@@ -331,6 +326,8 @@ const handleSubmit = async () => {
         }
         
         success.value = 'Тур успешно добавлен!'
+        // Закрываем попап сразу после успешного добавления
+        emit('close')
       }
     }
 

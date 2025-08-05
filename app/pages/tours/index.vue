@@ -170,7 +170,7 @@ const deleteTour = async (tourId) => {
   <section class="flex justify-center px-2 sm:px-4 md:px-[50px] mb-16">
     <div v-if="error" class="text-center text-red-500 py-8">Ошибка: {{ error.message }}</div>
     <ClientOnly>
-      <div v-if="!error" class="flex flex-wrap gap-y-[50px] gap-x-[50px] justify-center w-full max-w-[1290px] mx-auto">
+      <div class="flex flex-wrap gap-y-[50px] gap-x-[50px] justify-center w-full max-w-[1290px] mx-auto">
         <!-- Скелетоны во время загрузки -->
         <template v-if="loading">
           <TourCardSkeleton v-for="i in 6" :key="`skeleton-${i}`" />
@@ -179,7 +179,10 @@ const deleteTour = async (tourId) => {
         <!-- Реальные карточки после загрузки -->
         <template v-else>
         <!-- Отладочная информация -->
-        <div v-if="!sortedTours || sortedTours.length === 0" class="w-full text-center text-gray-500">
+        <div v-if="error" class="w-full text-center text-red-500 py-8">
+          Ошибка: {{ error.message }}
+        </div>
+        <div v-else-if="!sortedTours || sortedTours.length === 0" class="w-full text-center text-gray-500">
           Нет доступных туров
         </div>
         
@@ -214,7 +217,7 @@ const deleteTour = async (tourId) => {
           </div>
 
           <GoogleDriveImage
-            :src="tour.image_url || defaultImage"
+            :src="tour.image_url || 'https://saletur.ru/galery/tfoto/big/061/49/614981.jpg'"
             :alt="tour.title"
             class="absolute inset-0 w-full h-full object-cover object-center z-0"
             draggable="false"

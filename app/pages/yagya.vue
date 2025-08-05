@@ -422,95 +422,98 @@ const deleteYagyaInfo = async (infoId) => {
           Фокус ягьи
         </h2>
 
-                            <div class="flex flex-wrap gap-4 justify-center md:justify-start mb-12">
-                      <button 
-                        @click="activeFilter = 'all'"
-                        :class="[
-                          'px-[15px] md:px-[30px] py-[8px] md:py-[15px] font-montserrat font-semibold text-[14px] md:text-[22px] rounded-full transition-all duration-200 shadow-md hover:shadow-lg',
-                          activeFilter === 'all' 
-                            ? 'bg-orange-400 text-white border-2 border-orange-400' 
-                            : 'bg-white text-orange-400 border-2 border-orange-400 hover:bg-orange-400 hover:text-white'
-                        ]"
-                      >
-                        Все ягьи
-                      </button>
-                      <button 
-                        v-for="category in activeCategories"
-                        :key="category.id"
-                        @click="activeFilter = category.slug"
-                        :class="[
-                          'inline-flex items-center gap-2 px-[15px] md:px-[30px] py-[8px] md:py-[15px] font-montserrat font-semibold text-[14px] md:text-[22px] rounded-full transition-all duration-200 shadow-md hover:shadow-lg',
-                          activeFilter === category.slug 
-                            ? 'bg-orange-400 text-white border-2 border-orange-400' 
-                            : 'bg-white text-orange-400 border-2 border-orange-400 hover:bg-orange-400 hover:text-white'
-                        ]"
-                      >
-                        <!-- Админ кнопки в одном ряду с текстом -->
-                        <div v-if="isAdmin" class="flex gap-1">
-                          <button
-                            @click.stop="openEditCategoryPopup(category)"
-                            class="bg-blue-500 hover:bg-blue-600 text-white w-[36px] h-[36px] rounded-full transition-colors duration-200 flex items-center justify-center shadow-lg"
-                          >
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                            </svg>
-                          </button>
-                          <button
-                            @click.stop="confirmDeleteCategory(category)"
-                            class="bg-red-500 hover:bg-red-600 text-white w-[36px] h-[36px] rounded-full transition-colors duration-200 flex items-center justify-center shadow-lg"
-                          >
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                            </svg>
-                          </button>
-                        </div>
-                        
-                        {{ category.name }} <span class="text-gray-400 text-[14px] md:text-[16px]">({{ yagyaByCategory[category.slug]?.length || 0 }})</span>
-                      </button>
-                      
-                      <!-- Кнопки добавления для администраторов -->
-                      <div v-if="isAdmin" class="flex gap-2">
-                        <!-- Кнопка добавления категории -->
-                        <button 
-                          @click="openAddCategoryPopup"
-                          class="inline-flex items-center justify-center px-[30px] py-[15px] bg-green-500 text-white rounded-full hover:bg-green-600 transition-all duration-200 shadow-md hover:shadow-lg"
-                        >
-                          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                          </svg>
-                        </button>
-                        
-                        <!-- Кнопка добавления ягья -->
-                        <button 
-                          @click="openAddYagyaPopup"
-                          class="inline-flex items-center justify-center px-[30px] py-[15px] bg-green-500 text-white rounded-full hover:bg-green-600 transition-all duration-200 shadow-md hover:shadow-lg font-montserrat font-semibold text-[22px]"
-                        >
-                          Добавить ягья
-                        </button>
-                      </div>
-                    </div>
+                            <ClientOnly>
+                              <div class="flex flex-wrap gap-4 justify-center md:justify-start mb-12">
+                                <button 
+                                  @click="activeFilter = 'all'"
+                                  :class="[
+                                    'px-[15px] md:px-[30px] py-[8px] md:py-[15px] font-montserrat font-semibold text-[14px] md:text-[22px] rounded-full transition-all duration-200 shadow-md hover:shadow-lg',
+                                    activeFilter === 'all' 
+                                      ? 'bg-orange-400 text-white border-2 border-orange-400' 
+                                      : 'bg-white text-orange-400 border-2 border-orange-400 hover:bg-orange-400 hover:text-white'
+                                  ]"
+                                >
+                                  Все ягьи
+                                </button>
+                                <button 
+                                  v-for="category in activeCategories"
+                                  :key="category.id"
+                                  @click="activeFilter = category.slug"
+                                  :class="[
+                                    'inline-flex items-center gap-2 px-[15px] md:px-[30px] py-[8px] md:py-[15px] font-montserrat font-semibold text-[14px] md:text-[22px] rounded-full transition-all duration-200 shadow-md hover:shadow-lg',
+                                    activeFilter === category.slug 
+                                      ? 'bg-orange-400 text-white border-2 border-orange-400' 
+                                      : 'bg-white text-orange-400 border-2 border-orange-400 hover:bg-orange-400 hover:text-white'
+                                  ]"
+                                >
+                                  <!-- Админ кнопки в одном ряду с текстом -->
+                                  <div v-if="isAdmin" class="flex gap-1">
+                                    <button
+                                      @click.stop="openEditCategoryPopup(category)"
+                                      class="bg-blue-500 hover:bg-blue-600 text-white w-[36px] h-[36px] rounded-full transition-colors duration-200 flex items-center justify-center shadow-lg"
+                                    >
+                                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                      </svg>
+                                    </button>
+                                    <button
+                                      @click.stop="confirmDeleteCategory(category)"
+                                      class="bg-red-500 hover:bg-red-600 text-white w-[36px] h-[36px] rounded-full transition-colors duration-200 flex items-center justify-center shadow-lg"
+                                    >
+                                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                      </svg>
+                                    </button>
+                                  </div>
+                                  
+                                  {{ category.name }} <span class="text-gray-400 text-[14px] md:text-[16px]">({{ yagyaByCategory[category.slug]?.length || 0 }})</span>
+                                </button>
+                                
+                                <!-- Кнопки добавления для администраторов -->
+                                <div v-if="isAdmin" class="flex gap-2">
+                                  <!-- Кнопка добавления категории -->
+                                  <button 
+                                    @click="openAddCategoryPopup"
+                                    class="inline-flex items-center justify-center px-[30px] py-[15px] bg-green-500 text-white rounded-full hover:bg-green-600 transition-all duration-200 shadow-md hover:shadow-lg"
+                                  >
+                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                    </svg>
+                                  </button>
+                                  
+                                  <!-- Кнопка добавления ягья -->
+                                  <button 
+                                    @click="openAddYagyaPopup"
+                                    class="inline-flex items-center justify-center px-[30px] py-[15px] bg-green-500 text-white rounded-full hover:bg-green-600 transition-all duration-200 shadow-md hover:shadow-lg font-montserrat font-semibold text-[22px]"
+                                  >
+                                    Добавить ягья
+                                  </button>
+                                </div>
+                              </div>
+                            </ClientOnly>
 
         <!-- Карточки ягья -->
-        <div class="max-w-[1290px] mx-auto">
-          <!-- Loading State -->
-          <div v-if="loading" class="text-center py-12">
-            <div class="text-orange-400 text-xl font-montserrat">Загрузка ягьи...</div>
-          </div>
+        <ClientOnly>
+          <div class="max-w-[1290px] mx-auto">
+            <!-- Loading State -->
+            <div v-if="loading" class="text-center py-12">
+              <div class="text-orange-400 text-xl font-montserrat">Загрузка ягьи...</div>
+            </div>
 
-          <!-- Error State -->
-          <div v-else-if="error" class="text-center py-12">
-            <div class="text-red-500 text-xl font-montserrat">Ошибка загрузки данных</div>
-            <div class="text-red-400 text-sm mt-2">{{ error }}</div>
-          </div>
+            <!-- Error State -->
+            <div v-else-if="error" class="text-center py-12">
+              <div class="text-red-500 text-xl font-montserrat">Ошибка загрузки данных</div>
+              <div class="text-red-400 text-sm mt-2">{{ error }}</div>
+            </div>
 
-          <!-- No Data State -->
-          <div v-else-if="!loading && !error && yagya.length === 0" class="text-center py-12">
-            <div class="text-orange-400 text-xl font-montserrat">Нет доступных ягьи</div>
-            <div class="text-gray-500 text-sm mt-2">Попробуйте обновить страницу</div>
-          </div>
+            <!-- No Data State -->
+            <div v-else-if="!loading && !error && yagya.length === 0" class="text-center py-12">
+              <div class="text-orange-400 text-xl font-montserrat">Нет доступных ягьи</div>
+              <div class="text-gray-500 text-sm mt-2">Попробуйте обновить страницу</div>
+            </div>
 
-          <!-- Data Display -->
-          <div v-if="!loading && !error && yagya.length > 0">
+            <!-- Data Display -->
+            <div v-if="!loading && !error && yagya.length > 0">
             
             <!-- Dynamic Category Sections -->
             <div 
@@ -675,6 +678,7 @@ const deleteYagyaInfo = async (infoId) => {
 
           </div>
         </div>
+        </ClientOnly>
       </div>
     </section>
     

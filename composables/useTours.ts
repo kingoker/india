@@ -46,7 +46,6 @@ export function useTours() {
       try {
         localStorage.removeItem(CACHE_KEY)
         localStorage.removeItem(CACHE_TIMESTAMP_KEY)
-        console.log('Кэш туров очищен')
       } catch (e) {
         console.warn('Ошибка очистки кэша:', e)
       }
@@ -56,7 +55,6 @@ export function useTours() {
   const fetchTours = async (force = false) => {
     // Если force = true, игнорируем кэш и загружаем свежие данные
     if (force) {
-      console.log('Принудительное обновление туров из БД')
       loading.value = true
       error.value = null
       
@@ -80,7 +78,6 @@ export function useTours() {
           
           // Обновляем кэш в localStorage
           setCachedData(toursData)
-          console.log('Туры обновлены из БД:', toursData.length, 'записей')
         }
       } catch (err) {
         console.error('Ошибка загрузки туров:', err)

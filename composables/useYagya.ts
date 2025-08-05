@@ -52,7 +52,6 @@ export function useYagya() {
         localStorage.removeItem(YAGYA_CACHE_TIMESTAMP_KEY)
         localStorage.removeItem(CATEGORIES_CACHE_KEY)
         localStorage.removeItem(CATEGORIES_CACHE_TIMESTAMP_KEY)
-        console.log('Кэш ягьи очищен')
       } catch (e) {
         console.warn('Ошибка очистки кэша ягьи:', e)
       }
@@ -62,7 +61,6 @@ export function useYagya() {
   const fetchYagya = async (filters?: YagyaFilters, force = false) => {
     // Если force = true, игнорируем кэш и загружаем свежие данные
     if (force) {
-      console.log('Принудительное обновление ягьи из БД')
       loading.value = true
       error.value = null
       
@@ -131,7 +129,6 @@ export function useYagya() {
         setCachedData(YAGYA_CACHE_KEY, YAGYA_CACHE_TIMESTAMP_KEY, transformedYagya)
         setCachedData(CATEGORIES_CACHE_KEY, CATEGORIES_CACHE_TIMESTAMP_KEY, categoriesData)
         
-        console.log('Ягья обновлена из БД:', transformedYagya.length, 'записей')
       } catch (err) {
         console.error('Ошибка загрузки ягьи:', err)
         error.value = err instanceof Error ? err.message : 'Произошла ошибка при загрузке данных'

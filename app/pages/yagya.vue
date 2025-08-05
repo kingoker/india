@@ -130,7 +130,6 @@ const openEditCategoryPopup = (category) => {
 }
 
 const handleCategoryAdded = async (newCategory) => {
-  console.log('Категория добавлена:', newCategory)
   // Принудительно обновляем список категорий
   await fetchYagya({}, true) // force = true для принудительного обновления из БД
   await getCategories()
@@ -174,7 +173,6 @@ const deleteCategory = async (categoryId) => {
       console.error('Категория не была удалена - нет данных в ответе')
       alert('Ошибка удаления категории: запись не найдена или не удалена')
     } else {
-      console.log('Категория удалена с ID:', categoryId)
       // Принудительно обновляем список категорий
       await fetchYagya({}, true) // force = true для принудительного обновления из БД
       await getCategories()
@@ -202,7 +200,6 @@ const openEditYagyaPopup = (yagya) => {
 }
 
 const handleYagyaAdded = async (newYagya) => {
-  console.log('Ягья добавлена:', newYagya)
   // Принудительно обновляем список ягья
   await fetchYagya({}, true) // force = true для принудительного обновления из БД
   
@@ -243,7 +240,6 @@ const deleteYagya = async (yagyaId) => {
     if (error) {
       alert('Ошибка удаления ягья: ' + error.message)
     } else {
-      console.log('Ягья удалена с ID:', yagyaId)
       // Принудительно обновляем список ягья
       await fetchYagya({}, true) // force = true для принудительного обновления из БД
       await getCategories()

@@ -244,8 +244,7 @@ const handleSubmit = async () => {
                     slug: formData.value.slug
                   }
                   
-                  console.log('Обновляем тур с ID:', props.editingTour.id)
-                  console.log('Данные для обновления:', updateData)
+
                   
                   const { data, error: updateError } = await supabase
                     .from('tours')
@@ -254,10 +253,8 @@ const handleSubmit = async () => {
                     .select('*')
                 
                   if (updateError) {
-                    console.error('Ошибка обновления:', updateError)
                     error.value = 'Ошибка обновления тура: ' + updateError.message
                   } else if (!data || data.length === 0) {
-                    console.log('Нет данных после обновления, проверяем тур...')
                     // Проверяем, существует ли тур после обновления
                     const { data: checkData, error: checkError } = await supabase
                       .from('tours')
@@ -276,7 +273,6 @@ const handleSubmit = async () => {
                       error.value = 'Ошибка обновления тура: запись не найдена'
                     }
                   } else {
-                    console.log('Тур успешно обновлен:', data[0])
                     success.value = 'Тур успешно обновлен!'
                     result = data[0]
                     // Закрываем попап сразу после успешного обновления

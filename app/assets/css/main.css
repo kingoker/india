@@ -1,0 +1,20 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+@theme static {
+  --font-sans: 'Montserrat', sans-serif;
+  --font-serif: 'Alice', serif;
+
+  /* Шафран — тёплая индийская палитра (primary) */
+  --color-saffron-50: #FFF8ED;
+  --color-saffron-100: #FEEFD3;
+  --color-saffron-200: #FDDCA6;
+  --color-saffron-300: #FBC26E;
+  --color-saffron-400: #F99E3C;
+  --color-saffron-500: #F5811A;
+  --color-saffron-600: #E56610;
+  --color-saffron-700: #BE4C10;
+  --color-saffron-800: #973D15;
+  --color-saffron-900: #7A3414;
+  --color-saffron-950: #421906;
+}

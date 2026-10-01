@@ -1,0 +1,620 @@
+<meta charset="utf-8">
+<title>Взгляд сверху</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant:wght@400;500;600;700&family=Golos+Text:wght@400;500;600&display=swap">
+<style>
+  :root{
+    color-scheme:light;
+    --paper:#F6ECD6;--paper-2:#FCF7EA;
+    --ink:#2A1A10;--ink-soft:#6E5B4B;--ink-faint:#9A8974;
+    --marigold:#E39A1E;--vermilion:#D2402A;
+    --peacock:#0F6E68;--peacock-deep:#0B4F4A;--peacock-soft:#E4EFED;
+    --gold-line:#D3B978;--hair:#E4D6B8;
+    --font-display:"Cormorant",Georgia,serif;
+    --font-body:"Golos Text",system-ui,-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--font-body);background:var(--paper);color:var(--ink);padding-bottom:110px}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 40px}
+  img{max-width:100%}
+
+  /* HERO */
+  .hero{position:relative;min-height:min(780px,94vh);overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#FBF3DE;padding:80px 32px 130px;background:#191333}
+  .hero-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 42%;z-index:0}
+  .hero-scrim{position:absolute;inset:0;z-index:1;background:radial-gradient(96% 78% at 50% 40%, rgba(12,8,24,.5) 0%, rgba(12,8,24,.2) 44%, rgba(12,8,24,0) 72%), linear-gradient(180deg,rgba(16,12,34,.5) 0%,rgba(16,12,34,.14) 26%,rgba(16,12,34,.02) 46%,rgba(30,16,18,.2) 72%,rgba(40,20,16,.5) 100%)}
+  .fire{position:absolute;left:50%;bottom:0;transform:translateX(-50%);height:66%;width:auto;z-index:2;mix-blend-mode:screen;pointer-events:none;filter:contrast(1.28) brightness(1.02);-webkit-mask:radial-gradient(56% 74% at 50% 48%, #000 44%, rgba(0,0,0,0) 100%);mask:radial-gradient(56% 74% at 50% 48%, #000 44%, rgba(0,0,0,0) 100%);animation:flick 4.8s ease-in-out infinite}
+  @keyframes flick{0%,100%{opacity:.94;transform:translateX(-50%) scale(1)}50%{opacity:1;transform:translateX(-50%) scale(1.015)}}
+  .hero canvas{position:absolute;inset:0;width:100%;height:100%;z-index:3}
+  .hero-haze{position:absolute;left:0;right:0;bottom:0;height:300px;z-index:5;pointer-events:none;background:linear-gradient(180deg,rgba(30,20,44,0) 0%,rgba(34,22,42,.28) 32%,rgba(46,26,28,.6) 58%,rgba(58,30,22,.86) 80%,var(--paper) 100%)}
+
+  .topbar{position:absolute;top:30px;left:0;right:0;z-index:8;display:flex;align-items:center;justify-content:space-between;padding:0 44px}
+  .brand{display:flex;align-items:center;gap:11px}
+  .brand .mark{width:38px;height:38px;display:grid;place-items:center;color:#F3D98E;filter:drop-shadow(0 0 7px rgba(243,217,142,.4))}
+  .brand .name{font-family:var(--font-display);font-size:25px;font-weight:600;letter-spacing:.015em;color:#FBF3DE;text-shadow:0 1px 10px rgba(10,7,20,.4)}
+  .topnav{display:flex;align-items:center;gap:28px}
+  .topnav a{color:rgba(253,246,230,.82);font-size:14px;font-weight:500;text-decoration:none;cursor:pointer}
+  .topnav a:hover{color:#FBF3DE}
+  .enter{font-size:14px;font-weight:500;color:#FBF3DE;background:rgba(255,255,255,.1);border:1px solid rgba(247,222,150,.42);border-radius:999px;padding:9px 20px;cursor:pointer}
+
+  .hero-copy{position:relative;z-index:6;max-width:760px}
+  .hero-copy::before{content:"";position:absolute;z-index:-1;left:50%;top:50%;width:130%;height:150%;transform:translate(-50%,-50%);background:radial-gradient(ellipse 46% 42% at 50% 50%, rgba(10,7,20,.66) 0%, rgba(10,7,20,.4) 46%, rgba(10,7,20,0) 78%);pointer-events:none}
+  .kicker{font-size:13px;color:#F3D98E;font-weight:500;letter-spacing:.1em;display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
+  .kicker::before,.kicker::after{content:"";width:26px;height:1px;background:rgba(243,217,142,.6)}
+  h1{font-family:var(--font-display);font-weight:600;font-size:76px;line-height:.96;margin:0 0 18px;text-wrap:balance;color:#FDF6E6}
+  .hero .sub{font-size:18px;line-height:1.55;color:rgba(253,246,230,.85);max-width:44ch;margin:0 auto 26px}
+  .btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:11px;font-family:var(--font-body);font-size:16px;font-weight:500;border:none;border-radius:16px;padding:16px 30px;cursor:pointer}
+  .btn-primary svg{width:19px;height:19px}
+  .hero .btn-primary{background:linear-gradient(160deg,#FAD06A,#E28E22);color:#3A230E;font-weight:500;box-shadow:0 18px 40px -14px rgba(0,0,0,.6),0 4px 14px -4px rgba(232,140,34,.7),0 0 0 1px rgba(255,236,190,.35) inset}
+  .hero .btn-primary:hover{background:linear-gradient(160deg,#FCD778,#EA972B)}
+
+  /* SECTIONS */
+  section{padding:76px 0 0}
+  .eyebrow{font-size:13px;letter-spacing:.08em;color:var(--peacock);font-weight:500;margin-bottom:8px;text-align:center}
+  .h2{font-family:var(--font-display);font-size:44px;font-weight:600;line-height:1.04;text-align:center;margin:0 0 10px}
+  .lead{font-size:16px;color:var(--ink-soft);line-height:1.6;text-align:center;max-width:52ch;margin:0 auto 40px}
+
+  .path{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:30px;margin-top:6px}
+  .path::before{content:"";position:absolute;top:34px;left:16%;right:16%;height:2px;background:repeating-linear-gradient(90deg,var(--gold-line) 0 6px,transparent 6px 13px);z-index:0}
+  .stop{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;text-align:center}
+  .stop .mrk{position:relative;width:70px;height:70px;border-radius:50%;background:var(--paper);border:1.5px solid var(--gold-line);display:grid;place-items:center;color:#B24A22;margin-bottom:20px}
+  .stop .mrk svg{width:32px;height:32px}
+  .stop .mrk b{position:absolute;top:-4px;right:-4px;width:24px;height:24px;border-radius:50%;background:var(--marigold);color:#FBF3DE;font-size:12px;font-weight:600;display:grid;place-items:center;border:2px solid var(--paper)}
+  .stop.dest .mrk{background:radial-gradient(circle at 50% 34%,#FBE7B0,#F1CB74);border-color:var(--marigold);color:#9A3B12;box-shadow:0 0 0 6px rgba(227,154,30,.12),0 12px 26px -10px rgba(227,154,30,.65)}
+  .stop .txt{display:flex;flex-direction:column;align-items:center;flex:1;min-width:0}
+  .stop h3{font-family:var(--font-display);font-size:25px;font-weight:600;margin:0 0 8px}
+  .stop p{font-size:14.5px;color:var(--ink-soft);line-height:1.55;margin:0 0 14px;max-width:32ch}
+  .stop .chip{font-size:12.5px;font-weight:500;color:var(--peacock-deep);background:var(--peacock-soft);border:1px solid #CADAD7;border-radius:999px;padding:6px 14px;margin-top:auto}
+  .stop.dest .chip{color:#9A3B12;background:#FBEED3;border-color:var(--gold-line)}
+
+  .guides{display:flex;flex-direction:column;gap:52px;max-width:960px;margin:8px auto 0}
+  .guide{display:flex;gap:48px;align-items:center}
+  .guide:nth-child(even){flex-direction:row-reverse}
+  .portrait{flex:none;width:300px}
+  .arch{position:relative;aspect-ratio:4/5;border:1px solid var(--gold-line);border-radius:190px 190px 20px 20px;background:#2A1A10;overflow:hidden;box-shadow:0 22px 44px -26px rgba(58,38,18,.7)}
+  .arch img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .arch::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(42,26,16,0) 60%,rgba(42,26,16,.42) 100%)}
+  .about{flex:1;min-width:0}
+  .about .nm{font-family:var(--font-display);font-size:34px;font-weight:600;line-height:1}
+  .about .tags{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 18px}
+  .about .tags span{font-size:12.5px;font-weight:500;color:var(--peacock-deep);background:var(--peacock-soft);border:1px solid #CADAD7;border-radius:999px;padding:6px 13px}
+  .about .bio{font-family:var(--font-display);font-style:italic;font-size:21px;line-height:1.5;color:var(--ink);max-width:48ch;border-left:2px solid var(--gold-line);border-radius:0;padding-left:20px}
+
+  .gcards{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  .gc{background:var(--paper-2);border:1px solid var(--hair);border-radius:20px;padding:14px;display:flex;flex-direction:column}
+  .gc .slot,.tour .slot{position:relative;border:1px solid var(--hair);border-radius:14px;background:#2A1A10;overflow:hidden}
+  .slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .gc .slot{aspect-ratio:4/3;margin-bottom:16px}
+  .slot svg{width:30px;height:30px;opacity:.6}
+  .slot .cap{font-size:12px;text-align:center;padding:0 16px;line-height:1.35}
+  .gc .tag{font-size:12px;font-weight:500;color:var(--marigold)}
+  .gc .tt{font-family:var(--font-display);font-size:24px;font-weight:600;line-height:1.05;margin:2px 0 6px}
+  .gc .desc{font-size:14px;color:var(--ink-soft);margin-bottom:16px;flex:1}
+  .gc .row{display:flex;align-items:center;justify-content:space-between}
+  .price{font-size:15px;font-weight:500}
+  .mini{font-size:14px;font-weight:500;color:#FBF7EC;background:var(--peacock);border:none;border-radius:12px;padding:10px 16px;cursor:pointer}
+
+  .tour{display:grid;grid-template-columns:1.1fr 1fr;gap:32px;align-items:center;background:var(--paper-2);border:1px solid var(--hair);border-radius:24px;padding:20px}
+  .tour .slot{aspect-ratio:16/10;height:100%}
+  .tour .tt{font-family:var(--font-display);font-size:34px;font-weight:600;line-height:1.03;margin:0 0 10px}
+  .tour .mt{font-size:15px;color:var(--ink-soft);line-height:1.55;margin:0 0 18px}
+  .tour .foot{display:flex;align-items:center;gap:20px}
+
+  .cta-band{margin:80px 0 40px;border-radius:28px;padding:56px 40px;text-align:center;background:radial-gradient(120% 130% at 50% 0%,#F6D98E 0%,#F0C065 42%,#EBB24A 100%)}
+  .cta-band .h2{color:#3A230E}
+  .cta-band p{font-size:16px;color:#6A481C;margin:8px 0 22px}
+  .cta-band .btn-primary{background:#2A1A10;color:#FBF3DE}
+
+  /* FLOATING BOTTOM NAV */
+  .dock{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:40;display:flex;align-items:center;gap:2px;background:rgba(252,247,234,.95);backdrop-filter:blur(12px);border:1px solid var(--hair);border-radius:26px;padding:7px 10px;box-shadow:0 18px 44px -18px rgba(58,38,18,.55)}
+  .dock a{display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--ink-faint);font-size:11px;font-weight:500;text-decoration:none;cursor:pointer;padding:7px 18px;border-radius:16px;transition:color .2s ease,background .2s ease}
+  .dock a svg{width:22px;height:22px}
+  .dock a.active{color:var(--peacock)}
+  .dock a:hover{color:var(--peacock);background:var(--peacock-soft)}
+  .dock .spark{position:relative;flex:none;width:58px;height:58px;border-radius:50%;background:radial-gradient(130% 130% at 50% 18%,#F7C455 0%,#E88E22 44%,#CE3620 100%);display:grid;place-items:center;color:#FFF6E4;border:none;cursor:pointer;margin:0 10px;padding:0;transform:translateY(-16px);box-shadow:0 12px 22px -6px rgba(206,54,32,.7),0 0 0 6px rgba(252,247,234,.95),0 0 0 7px var(--hair)}
+  .dock .spark::after{content:"";position:absolute;inset:-5px;border-radius:50%;box-shadow:0 0 26px 3px rgba(232,142,34,.5);z-index:-1}
+  .dock .spark:hover{filter:brightness(1.06)}
+  .dock .spark svg{width:26px;height:26px}
+
+  /* QUIZ MODAL */
+  .backdrop{position:fixed;inset:0;background:rgba(42,26,16,.5);z-index:50;opacity:0;pointer-events:none;transition:opacity .3s ease;display:flex;align-items:center;justify-content:center;padding:24px}
+  .backdrop.open{opacity:1;pointer-events:auto}
+  .modal{width:100%;max-width:540px;background:var(--paper);border-radius:26px;overflow:hidden;transform:translateY(16px) scale(.98);transition:transform .35s cubic-bezier(.22,1,.36,1);display:flex;flex-direction:column;max-height:88vh;box-shadow:0 40px 80px -30px rgba(58,38,18,.6)}
+  .backdrop.open .modal{transform:none}
+  .m-head{display:flex;align-items:center;justify-content:space-between;padding:18px 24px 10px}
+  .prog{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink-faint);font-weight:500}
+  .prog .bar{width:120px;height:4px;border-radius:999px;background:var(--hair);overflow:hidden}
+  .prog .bar i{display:block;height:100%;background:var(--peacock);width:33%;transition:width .35s ease}
+  .close{width:34px;height:34px;border-radius:50%;border:1px solid var(--hair);background:var(--paper-2);display:grid;place-items:center;color:var(--ink-soft);cursor:pointer}
+  .close svg{width:16px;height:16px}
+  .m-body{overflow-y:auto;padding:6px 0}
+  .qstep{display:none;padding:10px 24px}
+  .qstep.active{display:block;animation:fadein .3s ease}
+  @keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .qtitle{font-family:var(--font-display);font-size:30px;font-weight:600;line-height:1.05;margin:2px 0 4px}
+  .qhint{font-size:14px;color:var(--ink-soft);margin:0 0 16px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .card{background:var(--paper-2);border:1px solid var(--hair);border-radius:16px;padding:14px;text-align:left;display:flex;flex-direction:column;gap:8px;cursor:pointer}
+  .card .tile{width:42px;height:42px;border-radius:12px;background:linear-gradient(160deg,#FBEFD3,#F1D69B);border:1px solid var(--gold-line);display:grid;place-items:center;color:#B24A22}
+  .card .tile svg{width:22px;height:22px}
+  .card .t{font-size:15px;font-weight:500}
+  .card .h{font-size:12px;color:var(--ink-faint)}
+  .card.sel{border-color:var(--peacock);background:var(--peacock-soft);box-shadow:0 0 0 3px rgba(15,110,104,.1)}
+  .card.sel .t{color:var(--peacock-deep)}
+  .opts{display:flex;flex-direction:column;gap:10px}
+  .opt{display:flex;align-items:center;gap:12px;padding:15px 16px;background:var(--paper-2);border:1px solid var(--hair);border-radius:14px;cursor:pointer;font-size:15px;font-weight:500}
+  .opt .rd{flex:none;width:20px;height:20px;border-radius:50%;border:1.6px solid var(--gold-line)}
+  .opt.sel{border-color:var(--peacock);background:var(--peacock-soft)}
+  .opt.sel .rd{border-color:var(--peacock);background:var(--peacock);box-shadow:inset 0 0 0 3px var(--peacock-soft)}
+  .rlead{background:linear-gradient(150deg,#FBEFD3,#F6E4B8);border:1px solid var(--gold-line);border-radius:18px;padding:18px;margin-bottom:16px}
+  .rq{font-size:13px;color:var(--ink-soft)}
+  .rq b{color:var(--peacock-deep);font-weight:500}
+  .rt{font-family:var(--font-display);font-size:26px;font-weight:600;margin:4px 0}
+  .rd{font-size:13.5px;color:var(--ink-soft);line-height:1.4}
+  .rsub{font-size:13px;color:var(--ink-faint);margin:2px 0 10px}
+  .row-item{margin:0 0 10px;padding:13px 15px;background:var(--paper-2);border:1px solid var(--hair);border-radius:14px;display:flex;align-items:center;gap:12px}
+  .row-item .ic{flex:none;width:40px;height:40px;border-radius:12px;background:var(--peacock-soft);display:grid;place-items:center;color:var(--peacock)}
+  .row-item .ic svg{width:20px;height:20px}
+  .row-item .bd{flex:1;min-width:0}
+  .row-item .mt{font-size:12.5px;color:var(--ink-soft);margin-top:2px}
+  .m-foot{display:flex;gap:12px;padding:16px 24px;border-top:1px solid var(--hair)}
+  .foot-btn{flex:1;font-family:var(--font-body);font-size:15px;font-weight:500;border-radius:14px;padding:15px;cursor:pointer;border:none}
+  .foot-btn.next{background:var(--peacock);color:#FBF7EC}
+  .foot-btn.next:disabled{opacity:.45;cursor:default}
+  .foot-btn.back{flex:none;width:58px;background:var(--paper-2);border:1px solid var(--hair);color:var(--ink-soft)}
+
+  @media (max-width:860px){
+    .wrap{padding:0 22px}
+    h1{font-size:clamp(38px,10.5vw,56px)}
+    .h2{font-size:30px}
+    .hero .sub{font-size:16px}
+    section{padding:58px 0 0}
+    .gcards,.tour{grid-template-columns:1fr}
+    .path{grid-template-columns:1fr;gap:0}
+    .path::before{top:24px;bottom:24px;left:32px;right:auto;width:2px;height:auto;background:repeating-linear-gradient(180deg,var(--gold-line) 0 6px,transparent 6px 13px)}
+    .stop{flex-direction:row;text-align:left;gap:18px;padding:14px 0;align-items:flex-start}
+    .stop .mrk{width:64px;height:64px;margin-bottom:0;flex:none}
+    .stop .txt{align-items:flex-start;padding-top:6px}
+    .stop p{max-width:none}
+    .stop .chip{margin-top:0;display:inline-block}
+    .guides{gap:40px}
+    .guide,.guide:nth-child(even){flex-direction:column;gap:22px;text-align:center}
+    .portrait{width:min(260px,74%);margin:0 auto}
+    .about{text-align:center}
+    .about .nm{font-size:28px}
+    .about .tags{justify-content:center}
+    .about .bio{border-left:none;padding-left:0;max-width:none;font-size:19px}
+    .topnav{display:none}
+    .cta-band{padding:44px 24px}
+    .dock{left:12px;right:12px;bottom:12px;transform:none;justify-content:space-around;gap:0;border-radius:24px;padding:8px 4px}
+    .dock a{flex:1;padding:6px 2px;font-size:10.5px}
+    .dock a:hover{background:none}
+    .dock .spark{width:56px;height:56px;margin:0}
+    .backdrop{align-items:flex-end;padding:0}
+    .modal{max-width:none;border-radius:26px 26px 0 0;max-height:92vh;transform:translateY(100%)}
+    .backdrop.open .modal{transform:none}
+  }
+  @media (max-width:520px){
+    .fire{height:58%}
+    h1{font-size:clamp(34px,11vw,46px)}
+    .about .nm{font-size:25px}
+    .arch{border-radius:130px 130px 16px 16px}
+  }
+  @media (prefers-reduced-motion:reduce){.fire{animation:none}.backdrop,.modal,.prog .bar i{transition:none}.page.active,.stop,.guide{animation:none}}
+
+  /* multi-page */
+  .page{display:none;padding:0}
+  .page.active{display:block;animation:pagein .34s ease}
+  @keyframes pagein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .page.inner{padding-bottom:120px;min-height:100vh}
+  .inner-top{position:sticky;top:0;z-index:20;background:rgba(246,236,214,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--hair);padding:14px 0}
+  .inner-top .wrap{display:flex;align-items:center;justify-content:space-between}
+  .inner-top .brand .mark{color:#B8791A;filter:none}
+  .inner-top .brand .name{color:var(--ink);text-shadow:none;font-size:22px}
+  .btn-mini{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:500;color:#FBF7EC;background:var(--peacock);border:none;border-radius:12px;padding:10px 16px;cursor:pointer}
+  .btn-mini svg{width:16px;height:16px}
+  .pagehead{padding:36px 0 4px}
+  .pagehead h1{font-family:var(--font-display);font-size:54px;font-weight:600;line-height:1;margin:0 0 10px}
+  .pagehead p{font-size:16px;color:var(--ink-soft);line-height:1.55;max-width:56ch;margin:0}
+  .toolbar{display:flex;flex-direction:column;gap:14px;margin:26px 0 26px}
+  .search{position:relative}
+  .search input{width:100%;height:52px;border:1px solid var(--hair);border-radius:16px;background:var(--paper-2);padding:0 18px 0 48px;font-family:var(--font-body);font-size:16px;color:var(--ink)}
+  .search input::placeholder{color:var(--ink-faint)}
+  .search input:focus{outline:none;border-color:var(--peacock);box-shadow:0 0 0 3px rgba(15,110,104,.12)}
+  .search svg{position:absolute;left:17px;top:16px;width:20px;height:20px;color:var(--ink-faint)}
+  .filters{display:flex;flex-wrap:wrap;gap:8px}
+  .filters button{font-size:13px;font-weight:500;color:var(--ink-soft);background:var(--paper-2);border:1px solid var(--hair);border-radius:999px;padding:9px 16px;cursor:pointer;transition:color .15s,background .15s,border-color .15s}
+  .filters button:hover{border-color:var(--gold-line)}
+  .filters button.on{color:#FBF7EC;background:var(--peacock);border-color:var(--peacock)}
+  .count{font-size:13px;color:var(--ink-faint);margin:0 0 16px}
+  .catalog{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+  .yc{display:flex;gap:15px;padding:16px;background:var(--paper-2);border:1px solid var(--hair);border-radius:18px;align-items:flex-start;transition:border-color .15s,box-shadow .15s;cursor:pointer;text-align:left}
+  .yc:hover{border-color:var(--gold-line);box-shadow:0 14px 30px -20px rgba(58,38,18,.55)}
+  .yc .tile{flex:none;width:58px;height:58px;border-radius:16px;background:linear-gradient(160deg,#FBEFD3,#F1D69B);border:1px solid var(--gold-line);display:grid;place-items:center;color:#B24A22}
+  .yc .tile svg{width:28px;height:28px}
+  .yc .bd{flex:1;min-width:0}
+  .yc .nm,.yc .deity,.yc .purpose{display:block}
+  .yc .theme{font-size:11px;font-weight:500;color:var(--peacock-deep);background:var(--peacock-soft);border-radius:999px;padding:3px 10px;display:inline-block;margin-bottom:6px}
+  .yc .nm{font-family:var(--font-display);font-size:21px;font-weight:600;line-height:1.05}
+  .yc .deity{font-size:12.5px;color:var(--ink-faint);margin-top:2px}
+  .yc .purpose{font-size:13.5px;color:var(--ink-soft);line-height:1.4;margin:8px 0 11px}
+  .yc .foot{display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px solid var(--hair);padding-top:10px}
+  .yc .date{font-size:13px;font-weight:500;color:var(--ink)}
+  .yc .date svg{width:14px;height:14px;vertical-align:-2px;margin-right:4px;color:var(--marigold)}
+  .yc .price{font-size:13px;color:var(--ink-soft)}
+  .noresults{padding:48px 0;text-align:center;color:var(--ink-soft);font-size:15px}
+  .sec-cta{text-align:center;margin-top:28px}
+  .seeall{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-body);font-size:15px;font-weight:500;color:var(--peacock);background:var(--peacock-soft);border:1px solid #CADAD7;border-radius:14px;padding:12px 22px;cursor:pointer}
+  .seeall svg{width:17px;height:17px}
+  .story{max-width:640px;margin:0 auto 8px;font-size:16.5px;line-height:1.7;color:var(--ink-soft);text-align:center}
+  .contacts{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:28px}
+  .contacts a{display:inline-flex;align-items:center;gap:9px;font-size:14px;font-weight:500;color:var(--ink);background:var(--paper-2);border:1px solid var(--hair);border-radius:14px;padding:12px 18px;text-decoration:none}
+  .contacts a:hover{border-color:var(--gold-line)}
+  .contacts a svg{width:18px;height:18px;color:var(--peacock)}
+  /* home ритуалы teaser */
+  .ritual-feat{display:grid;grid-template-columns:1.05fr 1fr;background:var(--paper-2);border:1px solid var(--hair);border-radius:22px;overflow:hidden;margin-bottom:22px}
+  .ritual-feat .ph{position:relative;min-height:300px;background:#2A1A10}
+  .ritual-feat .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .ritual-feat .ph .badge{position:absolute;top:16px;left:16px;font-size:12px;font-weight:500;color:#3A230E;background:rgba(250,220,120,.95);border-radius:999px;padding:6px 14px}
+  .ritual-feat .bd{padding:34px 36px;display:flex;flex-direction:column;justify-content:center}
+  .ritual-feat .tag{font-size:12.5px;font-weight:500;color:var(--marigold)}
+  .ritual-feat h3{font-family:var(--font-display);font-size:36px;font-weight:600;line-height:1.02;margin:5px 0 12px}
+  .ritual-feat p{font-size:15px;color:var(--ink-soft);line-height:1.55;margin:0 0 22px;max-width:40ch}
+  .ritual-feat .row{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .themes{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .theme-tile{display:flex;align-items:center;gap:14px;padding:16px;background:var(--paper-2);border:1px solid var(--hair);border-radius:16px;cursor:pointer;text-align:left;transition:border-color .15s,box-shadow .15s}
+  .theme-tile:hover{border-color:var(--gold-line);box-shadow:0 12px 26px -18px rgba(58,38,18,.5)}
+  .theme-tile .ti{flex:none;width:50px;height:50px;border-radius:14px;background:linear-gradient(160deg,#FBEFD3,#F1D69B);border:1px solid var(--gold-line);display:grid;place-items:center;color:#B24A22}
+  .theme-tile .ti svg{width:25px;height:25px}
+  .theme-tile .tn,.theme-tile .tc{display:block}
+  .theme-tile .tn{font-family:var(--font-display);font-size:20px;font-weight:600;line-height:1}
+  .theme-tile .tc{font-size:12.5px;color:var(--ink-faint);margin-top:4px}
+  @media (max-width:860px){
+    .pagehead h1{font-size:40px}
+    .catalog{grid-template-columns:1fr}
+    .ritual-feat{grid-template-columns:1fr}
+    .ritual-feat .ph{min-height:220px}
+    .themes{grid-template-columns:1fr}
+  }
+</style>
+
+<div id="pages">
+<section class="page active" data-page="home">
+<!-- HERO -->
+<header class="hero" id="home">
+  <img class="hero-bg" src="images/hero.jpg" alt="" aria-hidden="true">
+  <div class="hero-scrim" aria-hidden="true"></div>
+  <img class="fire" src="images/fire.png" alt="" aria-hidden="true">
+  <canvas id="embers"></canvas>
+  <div class="hero-haze" aria-hidden="true"></div>
+
+  <div class="topbar">
+    <div class="brand"><span class="mark"><svg width="34" height="34" viewBox="0 0 40 40" fill="none" stroke="currentColor"><circle cx="20" cy="20" r="12.5" stroke-width="1.1" opacity=".5"/><circle cx="20" cy="20" r="7.6" stroke-width="1.5"/><circle cx="20" cy="20" r="2.5" fill="currentColor" stroke="none"/><g stroke-width="1.5" stroke-linecap="round"><path d="M20 2.5V6.4"/><path d="M20 33.6V37.5"/><path d="M2.5 20H6.4"/><path d="M33.6 20H37.5"/></g></svg></span><span class="name">Взгляд сверху</span></div>
+    <nav class="topnav"><a data-page="yagyi">Ягьи</a><a data-page="tury">Туры</a><a data-page="about">О нас</a><a class="enter" data-open-quiz>Войти</a></nav>
+  </div>
+
+  <div class="hero-copy">
+    <span class="kicker">Ведическая астрология и Индия</span>
+    <h1>Огонь, открывающий путь</h1>
+    <p class="sub">Читаем вашу карту и ведём по ней — от разбора до поездки в места силы Индии.</p>
+    <button class="btn-primary" data-open-quiz><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5L19 10l-5.1 2L12 17l-1.9-5L5 10l5.1-2L12 3Z"/></svg>С чего начать?</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <section>
+    <div class="eyebrow">Ваш путь</div>
+    <div class="h2">Как мы ведём вас по карте</div>
+    <p class="lead">Не каталог ритуалов, а дорога: от вопроса — к практике и к самой Индии.</p>
+    <div class="path">
+      <div class="stop">
+        <div class="mrk"><b>1</b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M12 3l9 9-9 9-9-9z"/><path d="M12 3v18M3 12h18" opacity=".45"/></svg></div>
+        <div class="txt"><h3>Диагностика</h3><p>Читаем вашу ведическую карту и находим, что мешает — в здоровье, деньгах или отношениях.</p><span class="chip">Онлайн · 60 мин · от 3 500 ₽</span></div>
+      </div>
+      <div class="stop">
+        <div class="mrk"><b>2</b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3.2 3.6 5 6.4 5 9a5 5 0 0 1-10 0c0-2.6 1.8-5.4 5-9Z"/><path d="M12 11c1.3 1.5 2 2.7 2 3.6a2 2 0 0 1-4 0c0-.9.7-2.1 2-3.6Z"/></svg></div>
+        <div class="txt"><h3>Ягьи и практики</h3><p>Под найденные причины подбираем огненные ритуалы и практики и проводим их в благоприятные даты.</p><span class="chip">Личный план с датами</span></div>
+      </div>
+      <div class="stop dest">
+        <div class="mrk"><b>3</b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21h16M6 21v-9l6-4 6 4v9M12 4V2"/><path d="M10 21v-5h4v5"/></svg></div>
+        <div class="txt"><h3>Места силы</h3><p>Когда будете готовы — едем к истокам: храмы Индии, живой огонь и практика вживую.</p><span class="chip">Поездка с сопровождением</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="experts">
+    <div class="eyebrow">Кто ведёт</div>
+    <div class="h2">Ваши проводники</div>
+    <p class="lead">Две практикующие в ведической традиции — читают вашу карту и ведут от первого вопроса до самой Индии.</p>
+    <div class="guides">
+      <div class="guide">
+        <div class="portrait"><div class="arch"><img src="images/expert-1.webp" alt="Татьяна Карпенкова"></div></div>
+        <div class="about">
+          <div class="nm">Татьяна Карпенкова</div>
+          <div class="tags"><span>Кундалини-йога</span><span>Аюрведа</span><span>Астрология</span></div>
+          <p class="bio">Мягко веду в практику: через тело, ритм и осознанную еду помогаю прийти к внутренней тишине. А через астрологию — увидеть свою природу и найти точки опоры.</p>
+        </div>
+      </div>
+      <div class="guide">
+        <div class="portrait"><div class="arch"><img src="images/expert-2.webp" alt="Александра Андреева"></div></div>
+        <div class="about">
+          <div class="nm">Александра Андреева</div>
+          <div class="tags"><span>Смрити-медитация</span><span>Интегральный психолог</span><span>Джйотиш</span></div>
+          <p class="bio">Помогаю трансформировать сознание — работаю с подсознательными причинами, чтобы перемены были устойчивыми, а не на время.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Ягьи</div>
+    <div class="h2">Огонь под ваш запрос</div>
+    <p class="lead">Начните с темы — покажем подходящие ритуалы и ближайшие благоприятные даты.</p>
+    <div class="ritual-feat">
+      <div class="ph"><img src="images/y1.jpg" alt="Лакшми-ягья"><span class="badge">Ближайшая · 5 октября</span></div>
+      <div class="bd">
+        <div class="tag">Ягья месяца</div>
+        <h3>Лакшми-ягья</h3>
+        <p>Ритуал на благополучие и изобилие. Проводится жрецами в Индии в благоприятное для вас время.</p>
+        <div class="row"><button class="btn-primary" style="background:var(--peacock);color:#FBF7EC" data-open-quiz><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5L19 10l-5.1 2L12 17l-1.9-5L5 10l5.1-2L12 3Z"/></svg>Записаться</button><button class="seeall" data-page="yagyi">Все ягьи<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></button></div>
+      </div>
+    </div>
+    <div class="themes">
+      <button class="theme-tile" data-theme="money"><span class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V9M12 9c0-3-2-5-5-5 0 3 2 5 5 5Zm0 3c0-3 2-5 5-5 0 3-2 5-5 5Z"/></svg></span><span><span class="tn">Достаток</span><span class="tc">2 ритуала</span></span></button>
+      <button class="theme-tile" data-theme="health"><span class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13h3l2 4 4-10 2 6h5"/></svg></span><span><span class="tn">Здоровье</span><span class="tc">2 ритуала</span></span></button>
+      <button class="theme-tile" data-theme="protect"><span class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3Z"/></svg></span><span><span class="tn">Защита</span><span class="tc">2 ритуала</span></span></button>
+      <button class="theme-tile" data-theme="love"><span class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4.6-7 9-7 9Z"/></svg></span><span><span class="tn">Отношения</span><span class="tc">1 ритуал</span></span></button>
+      <button class="theme-tile" data-theme="spirit"><span class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4c2.4 3.2 3.6 5.3 3.6 7.2a3.6 3.6 0 0 1-7.2 0C8.4 9.3 9.6 7.2 12 4Z"/></svg></span><span><span class="tn">Дух</span><span class="tc">2 ритуала</span></span></button>
+      <button class="theme-tile" data-theme="work"><span class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M4 20c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></span><span><span class="tn">Дело</span><span class="tc">1 ритуал</span></span></button>
+    </div>
+  </section>
+
+  <section id="tury">
+    <div class="eyebrow">Туры</div>
+    <div class="h2">Паломничество в Индию</div>
+    <p class="lead">Дорога к истокам традиции — вместе с наставниками.</p>
+    <div class="tour">
+      <div class="slot"><img src="images/tour.jpg" alt="Места силы Южной Индии"></div>
+      <div>
+        <div class="tt">Места силы Южной Индии</div>
+        <div class="mt">10 дней — храмы, ягьи и практики с наставником и живым огнём. Небольшая группа, сопровождение на всём пути.</div>
+        <div class="foot"><span class="price">от 89 000 ₽</span><button class="mini" data-page="tury">Смотреть программу</button></div>
+      </div>
+    </div>
+    <div class="sec-cta"><button class="seeall" data-page="tury">Все туры и программы<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></button></div>
+  </section>
+
+  <div class="cta-band">
+    <div class="h2">С чего начать именно вам?</div>
+    <p>Пройдите короткий опрос — покажем ваш путь.</p>
+    <button class="btn-primary" data-open-quiz><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5L19 10l-5.1 2L12 17l-1.9-5L5 10l5.1-2L12 3Z"/></svg>Пройти опрос</button>
+  </div>
+</main>
+</section>
+
+<!-- ЯГЬИ CATALOG -->
+<section class="page inner" data-page="yagyi">
+  <div class="inner-top"><div class="wrap">
+    <div class="brand"><span class="mark"><svg width="30" height="30" viewBox="0 0 40 40" fill="none" stroke="currentColor"><circle cx="20" cy="20" r="12.5" stroke-width="1.1" opacity=".5"/><circle cx="20" cy="20" r="7.6" stroke-width="1.5"/><circle cx="20" cy="20" r="2.5" fill="currentColor" stroke="none"/><g stroke-width="1.5" stroke-linecap="round"><path d="M20 2.5V6.4"/><path d="M20 33.6V37.5"/><path d="M2.5 20H6.4"/><path d="M33.6 20H37.5"/></g></svg></span><span class="name">Взгляд сверху</span></div>
+    <button class="btn-mini" data-open-quiz><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5L19 10l-5.1 2L12 17l-1.9-5L5 10l5.1-2L12 3Z"/></svg>Пройти опрос</button>
+  </div></div>
+  <div class="wrap">
+    <div class="pagehead"><div class="eyebrow">Каталог ягий</div><h1>Ягьи</h1><p>Огненные ритуалы под ваш запрос. Проводятся жрецами в Индии в благоприятное для вас время.</p></div>
+    <div class="toolbar">
+      <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><input id="ySearch" type="text" placeholder="Поиск: название, божество или цель" aria-label="Поиск ягий"></div>
+      <div class="filters" id="yFilters">
+        <button class="on" data-cat="all">Все</button><button data-cat="money">Достаток</button><button data-cat="health">Здоровье</button><button data-cat="protect">Защита</button><button data-cat="love">Отношения</button><button data-cat="spirit">Дух</button><button data-cat="work">Дело</button>
+      </div>
+    </div>
+    <p class="count" id="yCount"></p>
+    <div class="catalog" id="yCatalog"></div>
+    <div class="noresults" id="yNo" hidden>Ничего не нашли. Измените запрос или сбросьте фильтр.</div>
+  </div>
+</section>
+
+<!-- ТУРЫ CATALOG -->
+<section class="page inner" data-page="tury">
+  <div class="inner-top"><div class="wrap">
+    <div class="brand"><span class="mark"><svg width="30" height="30" viewBox="0 0 40 40" fill="none" stroke="currentColor"><circle cx="20" cy="20" r="12.5" stroke-width="1.1" opacity=".5"/><circle cx="20" cy="20" r="7.6" stroke-width="1.5"/><circle cx="20" cy="20" r="2.5" fill="currentColor" stroke="none"/><g stroke-width="1.5" stroke-linecap="round"><path d="M20 2.5V6.4"/><path d="M20 33.6V37.5"/><path d="M2.5 20H6.4"/><path d="M33.6 20H37.5"/></g></svg></span><span class="name">Взгляд сверху</span></div>
+    <button class="btn-mini" data-open-quiz><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5L19 10l-5.1 2L12 17l-1.9-5L5 10l5.1-2L12 3Z"/></svg>Пройти опрос</button>
+  </div></div>
+  <div class="wrap">
+    <div class="pagehead"><div class="eyebrow">Каталог туров</div><h1>Туры в Индию</h1><p>Паломничество к местам силы — храмы, живой огонь и практика вживую, с сопровождением наставников.</p></div>
+    <div class="toolbar">
+      <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><input id="tSearch" type="text" placeholder="Поиск: направление или программа" aria-label="Поиск туров"></div>
+      <div class="filters" id="tFilters">
+        <button class="on" data-cat="all">Все</button><button data-cat="south">Юг Индии</button><button data-cat="himalaya">Гималаи</button><button data-cat="temples">Храмы</button>
+      </div>
+    </div>
+    <p class="count" id="tCount"></p>
+    <div class="catalog" id="tCatalog"></div>
+    <div class="noresults" id="tNo" hidden>Ничего не нашли. Измените запрос или сбросьте фильтр.</div>
+  </div>
+</section>
+
+<!-- О НАС -->
+<section class="page inner" data-page="about">
+  <div class="inner-top"><div class="wrap">
+    <div class="brand"><span class="mark"><svg width="30" height="30" viewBox="0 0 40 40" fill="none" stroke="currentColor"><circle cx="20" cy="20" r="12.5" stroke-width="1.1" opacity=".5"/><circle cx="20" cy="20" r="7.6" stroke-width="1.5"/><circle cx="20" cy="20" r="2.5" fill="currentColor" stroke="none"/><g stroke-width="1.5" stroke-linecap="round"><path d="M20 2.5V6.4"/><path d="M20 33.6V37.5"/><path d="M2.5 20H6.4"/><path d="M33.6 20H37.5"/></g></svg></span><span class="name">Взгляд сверху</span></div>
+    <button class="btn-mini" data-open-quiz><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5L19 10l-5.1 2L12 17l-1.9-5L5 10l5.1-2L12 3Z"/></svg>Пройти опрос</button>
+  </div></div>
+  <div class="wrap">
+    <div class="pagehead" style="text-align:center"><div class="eyebrow">О нас</div><h1>Кто вас ведёт</h1></div>
+    <p class="story">Мы — Татьяна и Александра. Прошли свой путь в ведической традиции и в самой Индии, к живому огню и наставникам. Теперь читаем вашу карту и ведём по ней — от первого вопроса до практики и поездки к истокам.</p>
+    <div class="guides" style="margin-top:44px">
+      <div class="guide">
+        <div class="portrait"><div class="arch"><img src="images/expert-1.webp" alt="Татьяна Карпенкова"></div></div>
+        <div class="about"><div class="nm">Татьяна Карпенкова</div><div class="tags"><span>Кундалини-йога</span><span>Аюрведа</span><span>Астрология</span></div><p class="bio">Мягко веду в практику: через тело, ритм и осознанную еду помогаю прийти к внутренней тишине. А через астрологию — увидеть свою природу и найти точки опоры.</p></div>
+      </div>
+      <div class="guide">
+        <div class="portrait"><div class="arch"><img src="images/expert-2.webp" alt="Александра Андреева"></div></div>
+        <div class="about"><div class="nm">Александра Андреева</div><div class="tags"><span>Смрити-медитация</span><span>Интегральный психолог</span><span>Джйотиш</span></div><p class="bio">Помогаю трансформировать сознание — работаю с подсознательными причинами, чтобы перемены были устойчивыми, а не на время.</p></div>
+      </div>
+    </div>
+    <div class="contacts">
+      <a href="https://t.me/vzglyad_sverhy" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3 18.7 19.4c-.2 1-.9 1.3-1.8.8l-4.9-3.6-2.4 2.3c-.3.3-.5.5-1 .5l.3-4.9 8.9-8c.4-.3-.1-.5-.6-.2L6.5 13 1.8 11.5c-1-.3-1-.9.2-1.4L20.7 3c.8-.3 1.5.2 1.2 1.3Z"/></svg>Telegram-канал</a>
+      <a href="https://instagram.com/ll_tuo_sole" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>Instagram</a>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- FLOATING DOCK -->
+<nav class="dock">
+  <a class="active" data-page="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-7 8 7"/><path d="M6 10v9h5v-5h2v5h5v-9"/></svg>Главная</a>
+  <a data-page="yagyi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 3.4 4.7 6 4.7 8.6A4.7 4.7 0 0 1 12 16.3a4.7 4.7 0 0 1-4.7-4.7C7.3 9 9 6.4 12 3Z"/><path d="M6 20h12"/></svg>Ягьи</a>
+  <button class="spark" data-open-quiz aria-label="Пройти опрос"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5L19 10l-5.1 2L12 17l-1.9-5L5 10l5.1-2L12 3Z"/></svg></button>
+  <a data-page="tury"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18Z"/></svg>Туры</a>
+  <a data-page="about"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-3.5 4.5-5 8-5s6.5 1.5 8 5"/></svg>О нас</a>
+</nav>
+
+<!-- QUIZ MODAL -->
+<div class="backdrop" id="backdrop">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="m-head">
+      <div class="prog"><span id="progText">Шаг 1 из 3</span><span class="bar"><i id="progBar"></i></span></div>
+      <button class="close" id="closeQuiz" aria-label="Закрыть"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div class="m-body">
+      <div class="qstep active" data-step="1">
+        <div class="qtitle">Какой у вас запрос?</div>
+        <p class="qhint">Выберите, что важно сейчас.</p>
+        <div class="grid" id="intentGrid">
+          <button class="card" data-id="health" data-title="Здоровье и силы"><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13h3l2 4 4-10 2 6h5"/></svg></span><span class="t">Здоровье и силы</span><span class="h">Восстановление</span></button>
+          <button class="card" data-id="money" data-title="Деньги и достаток"><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V9M12 9c0-3-2-5-5-5 0 3 2 5 5 5Zm0 3c0-3 2-5 5-5 0 3-2 5-5 5Z"/></svg></span><span class="t">Деньги и достаток</span><span class="h">Рост, стабильность</span></button>
+          <button class="card" data-id="love" data-title="Любовь и семья"><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4.6-7 9-7 9Z"/></svg></span><span class="t">Любовь и семья</span><span class="h">Отношения, дети</span></button>
+          <button class="card" data-id="protect" data-title="Защита и опора"><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3Z"/></svg></span><span class="t">Защита и опора</span><span class="h">Снятие преград</span></button>
+          <button class="card" data-id="spirit" data-title="Дух и осознанность"><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4c2.4 3.2 3.6 5.3 3.6 7.2a3.6 3.6 0 0 1-7.2 0C8.4 9.3 9.6 7.2 12 4Z"/></svg></span><span class="t">Дух и осознанность</span><span class="h">Практика, покой</span></button>
+          <button class="card" data-id="work" data-title="Дело и путь"><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M4 20c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></span><span class="t">Дело и путь</span><span class="h">Карьера, призвание</span></button>
+        </div>
+      </div>
+      <div class="qstep" data-step="2">
+        <div class="qtitle">Насколько давно это с вами?</div>
+        <p class="qhint">Поможет астрологу точнее прочитать карту.</p>
+        <div class="opts" id="durOpts">
+          <button class="opt" data-v="new"><span class="rd"></span>Появилось недавно</button>
+          <button class="opt" data-v="long"><span class="rd"></span>Тянется уже давно</button>
+          <button class="opt" data-v="always"><span class="rd"></span>Сколько себя помню</button>
+        </div>
+      </div>
+      <div class="qstep" data-step="3">
+        <div class="qtitle">Ваш путь</div>
+        <div class="rlead"><div class="rq">Запрос: <b id="resQ">—</b></div><div class="rt">Начните с разбора карты</div><div class="rd">Астролог найдёт причину в вашей карте и назначит точные ягьи и даты под запрос.</div></div>
+        <div class="rsub">Подходящие ягьи по вашей теме</div>
+        <div id="resYagyas"></div>
+      </div>
+    </div>
+    <div class="m-foot" id="foot">
+      <button class="foot-btn back" id="backBtn" aria-label="Назад"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M15 6l-6 6 6 6"/></svg></button>
+      <button class="foot-btn next" id="nextBtn" disabled>Далее</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var YAGYAS={health:[{n:"Дханвантари-ягья",d:"3 окт"},{n:"Мритьюнджая-хома",d:"9 окт"}],money:[{n:"Лакшми-ягья",d:"5 окт"},{n:"Кубера-хома",d:"11 окт"}],love:[{n:"Сваямвара Парвати",d:"1 окт"},{n:"Гуру-ягья",d:"12 окт"}],protect:[{n:"Хануман-хома",d:"29 сен"},{n:"Судершана-ягья",d:"7 окт"}],spirit:[{n:"Ганапати-хома",d:"28 сен"},{n:"Гаятри-ягья",d:"11 окт"}],work:[{n:"Сурья-ягья",d:"6 окт"},{n:"Гуру-Брихаспати",d:"12 окт"}]};
+  function $(s,r){return (r||document).querySelector(s);}
+  function $all(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));}
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---- pages ---- */
+  function setPage(name){
+    $all('.page').forEach(function(p){p.classList.toggle('active',p.dataset.page===name);});
+    $all('.dock a').forEach(function(a){a.classList.toggle('active',a.dataset.page===name);});
+    window.scrollTo(0,0);
+  }
+  $all('[data-page]:not(.page)').forEach(function(el){el.addEventListener('click',function(){setPage(el.dataset.page);});});
+  var homeTour=$('.tour');if(homeTour)homeTour.addEventListener('click',function(){setPage('tury');});
+  $all('.theme-tile').forEach(function(t){t.addEventListener('click',function(){setPage('yagyi');var f=document.querySelector('#yFilters button[data-cat="'+t.dataset.theme+'"]');if(f)f.click();});});
+
+  /* ---- catalogs ---- */
+  var GLYPH={money:'<path d="M12 21V9M12 9c0-3-2-5-5-5 0 3 2 5 5 5Zm0 3c0-3 2-5 5-5 0 3-2 5-5 5Z"/>',health:'<path d="M4 13h3l2 4 4-10 2 6h5"/>',protect:'<path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3Z"/>',love:'<path d="M12 20s-7-4.4-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4.6-7 9-7 9Z"/>',spirit:'<path d="M12 4c2.4 3.2 3.6 5.3 3.6 7.2a3.6 3.6 0 0 1-7.2 0C8.4 9.3 9.6 7.2 12 4Z"/>',work:'<circle cx="12" cy="8" r="3.4"/><path d="M4 20c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',temple:'<path d="M4 21h16M6 21v-9l6-4 6 4v9M10 21v-5h4v5M12 4V2"/>'};
+  function icon(cat){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'+(GLYPH[cat]||GLYPH.temple)+'</svg>';}
+  var DATEIC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="16" rx="3"/><path d="M4 9h16M8 3v4M16 3v4"/></svg>';
+  function plural(n,a,b,c){var m=n%100,d=n%10;if(m>10&&m<20)return c;if(d>1&&d<5)return b;if(d===1)return a;return c;}
+
+  var YAGYI=[
+    {n:'Лакшми-ягья',god:'Лакшми',cat:'money',cl:'Достаток',p:'Благополучие, изобилие и стабильный доход.',d:'5 окт',pr:'от 4 500 ₽'},
+    {n:'Кубера-хома',god:'Кубера',cat:'money',cl:'Достаток',p:'Приток денег и защита накоплений.',d:'11 окт',pr:'от 4 800 ₽'},
+    {n:'Мритьюнджая-хома',god:'Шива',cat:'health',cl:'Здоровье',p:'Восстановление сил, долголетие, защита от болезней.',d:'9 окт',pr:'от 5 200 ₽'},
+    {n:'Дханвантари-ягья',god:'Дханвантари',cat:'health',cl:'Здоровье',p:'Исцеление и крепкое тело.',d:'3 окт',pr:'от 5 000 ₽'},
+    {n:'Хануман-хома',god:'Хануман',cat:'protect',cl:'Защита',p:'Снятие преград, смелость и внутренняя сила.',d:'29 сен',pr:'от 4 800 ₽'},
+    {n:'Судершана-хома',god:'Вишну',cat:'protect',cl:'Защита',p:'Защита от негатива и дурного глаза.',d:'7 окт',pr:'от 5 400 ₽'},
+    {n:'Сваямвара Парвати',god:'Парвати',cat:'love',cl:'Отношения',p:'Гармония в паре, брак и взаимопонимание.',d:'1 окт',pr:'от 4 600 ₽'},
+    {n:'Ганапати-хома',god:'Ганеша',cat:'spirit',cl:'Дух',p:'Благое начало и устранение препятствий.',d:'28 сен',pr:'от 3 900 ₽'},
+    {n:'Гаятри-ягья',god:'Гаятри',cat:'spirit',cl:'Дух',p:'Ясность ума и духовный рост.',d:'11 окт',pr:'от 4 200 ₽'},
+    {n:'Сурья-ягья',god:'Сурья',cat:'work',cl:'Дело',p:'Карьера, авторитет и сила воли.',d:'6 окт',pr:'от 4 700 ₽'}
+  ];
+  var TURY=[
+    {n:'Места силы Южной Индии',cat:'south',cl:'Юг Индии',p:'10 дней — древние храмы, ягьи и практики с наставником и живым огнём.',d:'10 дней',pr:'от 89 000 ₽'},
+    {n:'Гималаи: исток традиции',cat:'himalaya',cl:'Гималаи',p:'12 дней — Ганг, ашрамы, медитация и тишина гор.',d:'12 дней',pr:'от 120 000 ₽'},
+    {n:'Храмы Тамилнада',cat:'temples',cl:'Храмы',p:'8 дней — величественные гопурамы, пуджи и живая традиция.',d:'8 дней',pr:'от 76 000 ₽'},
+    {n:'Варанаси и Ганга',cat:'temples',cl:'Храмы',p:'7 дней — обряды на реке, вечернее аарти, священный город.',d:'7 дней',pr:'от 68 000 ₽'}
+  ];
+  function card(o,glyphCat){
+    return '<button class="yc"><span class="tile">'+icon(glyphCat)+'</span><span class="bd"><span class="theme">'+o.cl+'</span><span class="nm">'+o.n+'</span>'+(o.god?'<span class="deity">Божество: '+o.god+'</span>':'')+'<span class="purpose">'+o.p+'</span><span class="foot"><span class="date">'+DATEIC+o.d+'</span><span class="price">'+o.pr+'</span></span></span></button>';
+  }
+  function makeCatalog(data,ids,glyphCat,noun){
+    var listEl=$('#'+ids.list),noEl=$('#'+ids.no),countEl=$('#'+ids.count),searchEl=$('#'+ids.search),filtersEl=$('#'+ids.filters);
+    var state={q:'',cat:'all'};
+    function render(){
+      var q=state.q.trim().toLowerCase();
+      var items=data.filter(function(o){
+        var okCat=state.cat==='all'||o.cat===state.cat;
+        var okQ=!q||(o.n+' '+(o.god||'')+' '+o.p+' '+o.cl).toLowerCase().indexOf(q)>=0;
+        return okCat&&okQ;
+      });
+      countEl.textContent=items.length+' '+plural(items.length,noun[0],noun[1],noun[2]);
+      noEl.hidden=items.length>0;
+      listEl.innerHTML=items.map(function(o){return card(o,glyphCat?glyphCat:o.cat);}).join('');
+    }
+    searchEl.addEventListener('input',function(){state.q=searchEl.value;render();});
+    filtersEl.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;$all('button',filtersEl).forEach(function(x){x.classList.toggle('on',x===b);});state.cat=b.dataset.cat;render();});
+    listEl.addEventListener('click',function(e){if(e.target.closest('.yc'))open();});
+    render();
+  }
+  makeCatalog(YAGYI,{list:'yCatalog',no:'yNo',count:'yCount',search:'ySearch',filters:'yFilters'},null,['ягья','ягьи','ягий']);
+  makeCatalog(TURY,{list:'tCatalog',no:'tNo',count:'tCount',search:'tSearch',filters:'tFilters'},'temple',['тур','тура','туров']);
+
+  (function(){
+    var c=$('#embers'); if(!c) return;
+    var ctx=c.getContext('2d'),W=0,H=0,dpr=Math.min(2,window.devicePixelRatio||1);
+    function size(){var r=c.getBoundingClientRect();W=r.width;H=r.height;c.width=W*dpr;c.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);}
+    var P=[];
+    function spawn(){return {x:W*0.5+(Math.random()-0.5)*130,y:H*0.42+Math.random()*30,r:1+Math.random()*2.6,vy:-(0.28+Math.random()*0.6),vx:(Math.random()-0.5)*0.4,a:0,la:0.55+Math.random()*0.45,life:0,max:160+Math.random()*160};}
+    for(var i=0;i<44;i++){var p=spawn();p.life=Math.random()*p.max;P.push(p);}
+    function frame(){ctx.clearRect(0,0,W,H);for(var i=0;i<P.length;i++){var p=P[i];p.life++;p.x+=p.vx;p.y+=p.vy;p.vx+=(Math.random()-0.5)*0.04;var t=p.life/p.max;p.a=t<0.2?(t/0.2)*p.la:(1-t)*p.la;if(p.life>=p.max||p.y<H*0.03){P[i]=spawn();continue;}ctx.beginPath();ctx.fillStyle='rgba(240,180,70,'+Math.max(0,p.a).toFixed(3)+')';ctx.arc(p.x,p.y,p.r,0,6.283);ctx.fill();}requestAnimationFrame(frame);}
+    size();window.addEventListener('resize',size);if(!reduce)requestAnimationFrame(frame);
+  })();
+
+  var backdrop=$('#backdrop');var step=1,intent=null,dur=null;
+  function open(){reset();backdrop.classList.add('open');}
+  function close(){backdrop.classList.remove('open');}
+  function reset(){step=1;intent=null;dur=null;$all('.card').forEach(function(c){c.classList.remove('sel');});$all('.opt').forEach(function(o){o.classList.remove('sel');});render();}
+  function render(){
+    $all('.qstep').forEach(function(q){q.classList.toggle('active',+q.dataset.step===step);});
+    $('#progText').textContent='Шаг '+step+' из 3';$('#progBar').style.width=(step*33.33)+'%';
+    var next=$('#nextBtn'),back=$('#backBtn'),foot=$('#foot');
+    back.style.display=step>1?'':'none';
+    if(step===1){next.textContent='Далее';next.disabled=!intent;foot.style.display='flex';}
+    else if(step===2){next.textContent='Показать путь';next.disabled=!dur;foot.style.display='flex';}
+    else{foot.style.display='none';buildResult();}
+  }
+  function buildResult(){
+    var it=$('.card[data-id="'+intent+'"]');$('#resQ').textContent=it?it.dataset.title:'—';
+    var list=YAGYAS[intent]||[];
+    $('#resYagyas').innerHTML=list.map(function(y){return '<div class="row-item"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3c3 3.4 4.7 6 4.7 8.6A4.7 4.7 0 0 1 12 16.3"/></svg></div><div class="bd"><div style="font-family:var(--font-display);font-size:18px;font-weight:600">'+y.n+'</div><div class="mt">'+y.d+' · по вашему запросу</div></div><button class="mini bookY">Записаться</button></div>';}).join('')+'<button class="btn-primary" style="width:100%;margin-top:6px;background:var(--peacock);color:#FBF7EC" id="bookRazbor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5L19 10l-5.1 2L12 17l-1.9-5L5 10l5.1-2L12 3Z"/></svg>Записаться на разбор</button>';
+    $('#bookRazbor').addEventListener('click',close);
+    $all('.bookY').forEach(function(b){b.addEventListener('click',function(){close();setPage('yagyi');});});
+  }
+  $('#intentGrid').addEventListener('click',function(e){var card=e.target.closest('.card');if(!card)return;$all('.card').forEach(function(c){c.classList.toggle('sel',c===card);});intent=card.dataset.id;$('#nextBtn').disabled=false;});
+  $('#durOpts').addEventListener('click',function(e){var opt=e.target.closest('.opt');if(!opt)return;$all('.opt').forEach(function(o){o.classList.toggle('sel',o===opt);});dur=opt.dataset.v;$('#nextBtn').disabled=false;});
+  $('#nextBtn').addEventListener('click',function(){if(step<3){step++;render();}});
+  $('#backBtn').addEventListener('click',function(){if(step>1){step--;render();}});
+  $('#closeQuiz').addEventListener('click',close);
+  backdrop.addEventListener('click',function(e){if(e.target===backdrop)close();});
+  $all('[data-open-quiz]').forEach(function(el){el.addEventListener('click',open);});
+  render();
+})();
+</script>

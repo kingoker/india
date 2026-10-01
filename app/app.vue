@@ -1,112 +1,77 @@
 <script setup lang="ts">
-import type { NavigationMenuItem } from '@nuxt/ui'
+const config = useRuntimeConfig()
 
-useHead({
-  meta: [
-    { name: 'viewport', content: 'width=device-width, initial-scale=1' }
-  ],
-  link: [
-    { rel: 'icon', href: '/favicon.ico' }
-  ],
-  htmlAttrs: {
-    lang: 'ru'
-  }
-})
-
-const title = 'Ягья · INDIA'
-const description = 'Ведические огненные ритуалы (Ягья), практики, курс и туры в Индию. Глубинные изменения через практику огня.'
+const title = 'Взгляд сверху — ведическая астрология и Индия'
+const description = 'Читаем вашу карту и ведём по ней — от разбора до огненных ягий и поездки в места силы Индии.'
 
 useSeoMeta({
   title,
-  titleTemplate: (t?: string) => (t && t !== title ? `${t} · Ягья · INDIA` : title),
+  titleTemplate: (t?: string) => (t && t !== title ? `${t} — Взгляд сверху` : title),
   description,
   ogTitle: title,
   ogDescription: description,
+  ogType: 'website',
+  ogImage: `${config.public.siteUrl}/images/hero.jpg`,
+  ogLocale: 'ru_RU',
   twitterCard: 'summary_large_image'
 })
 
-const nav: NavigationMenuItem[] = [
-  { label: 'Главная', to: '/' },
-  { label: 'Курс', to: '/kurs' },
-  { label: 'Практики', to: '/praktiki' },
-  { label: 'Ягья', to: '/yagya' },
-  { label: 'Туры', to: '/tury' }
-]
+// canonical и og:url — только когда задан SITE_URL
+if (config.public.siteUrl) {
+  const route = useRoute()
+  useHead({ link: [{ rel: 'canonical', href: computed(() => config.public.siteUrl + route.path) }] })
+  useSeoMeta({ ogUrl: computed(() => config.public.siteUrl + route.path) })
+}
+
+// Яндекс.Метрика (подключается при заданном ID)
+if (config.public.metrikaId) {
+  useHead({
+    script: [{
+      key: 'ym',
+      innerHTML: `(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,"script","https://mc.yandex.ru/metrika/tag.js","ym");ym(${config.public.metrikaId},"init",{clickmap:true,trackLinks:true,accurateTrackBounce:true});`
+    }]
+  })
+}
 </script>
 
 <template>
-  <UApp>
-    <UHeader>
-      <template #left>
-        <NuxtLink
-          to="/"
-          class="flex items-center gap-2 font-serif text-lg font-semibold tracking-wide"
-        >
-          <span class="text-primary text-2xl">ॐ</span>
-          <span>Ягья<span class="text-muted"> · INDIA</span></span>
-        </NuxtLink>
-      </template>
-
-      <UNavigationMenu
-        :items="nav"
-        variant="link"
-      />
-
-      <template #right>
-        <UColorModeButton />
-        <UButton
-          to="https://t.me/vzglyad_sverhy"
-          target="_blank"
-          icon="i-simple-icons-telegram"
-          color="primary"
-          variant="soft"
-          aria-label="Telegram"
-        />
-        <UButton
-          label="Оставить заявку"
-          color="primary"
-          class="hidden sm:inline-flex"
-          to="/#zayavka"
-        />
-      </template>
-
-      <template #body>
-        <UNavigationMenu
-          :items="nav"
-          orientation="vertical"
-        />
-      </template>
-    </UHeader>
-
-    <UMain>
+  <div>
+    <a href="#main" class="sr-only focus:not-sr-only">К содержимому</a>
+    <main id="main">
       <NuxtPage />
-    </UMain>
-
-    <UFooter>
-      <template #left>
-        <p class="text-sm text-muted">
-          © {{ new Date().getFullYear() }} Ягья · INDIA
-        </p>
-      </template>
-
-      <template #right>
-        <UButton
-          to="https://t.me/vzglyad_sverhy"
-          target="_blank"
-          icon="i-simple-icons-telegram"
-          color="neutral"
-          variant="ghost"
-          aria-label="Telegram"
-        />
-        <UButton
-          to="https://www.instagram.com/ll_tuo_sole/"
-          target="_blank"
-          icon="i-simple-icons-instagram"
-          color="neutral"
-          variant="ghost"
-          aria-label="Instagram"
-        />
-      </template>
-    </UFooter>
-  </UApp>
+    </main>
+    <SiteFooter />
+    <SiteNav />
+    <QuizModal />
+    <ReviewModal />
+    <VideoLightbox />
+  </div>
 </template>
+
+<style scoped>
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.sr-only.focus\:not-sr-only:focus {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 100;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 10px 18px;
+  clip: auto;
+  background: var(--saffron);
+  color: #fff;
+  border-radius: 12px;
+}
+</style>

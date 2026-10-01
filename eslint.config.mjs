@@ -14,6 +14,14 @@ export default withNuxt(
           ['^v-bind:ui$', [{ match: 'objectValues' }]]
         ]
       }
+    },
+    rules: {
+      // Проект использует собственный слой утилит в main.css
+      // (.btn, .card, .eyebrow, .container-x и т.д.) — плагин Tailwind
+      // принимает их за опечатки. Отключаем проверку неизвестных классов.
+      'better-tailwindcss/no-unknown-classes': 'off',
+      // Многоатрибутные теги в шаблонах допустимы для читабельности.
+      'vue/max-attributes-per-line': 'off'
     }
   }
 )

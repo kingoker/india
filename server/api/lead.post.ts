@@ -30,6 +30,7 @@ interface LeadBody {
 const TYPE_LABELS: Record<string, string> = {
   consultation: 'Консультация',
   yagya: 'Участие в ягье',
+  practice: 'Запись на практику',
   tour: 'Бронь тура',
   course: 'Запись на курс',
   waitlist: 'Лист ожидания',

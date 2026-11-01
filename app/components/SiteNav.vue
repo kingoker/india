@@ -8,15 +8,37 @@ const route = useRoute()
 const { openQuiz } = useQuiz()
 
 const isActive = (to: string) => (to === '/' ? route.path === '/' : route.path.startsWith(to))
+
+// Над тёмными блоками (hero страниц, огненные полосы) полупрозрачный бар теряется —
+// пока такой блок под баром, делаем его плотным (класс .on-hero, см. main.css).
+const DARK = '.home .hero, .yg-hero, .tr-hero, .ab-hero, .pg-fireband, .yg-final'
+const onHero = ref(false)
+const update = () => {
+  onHero.value = [...document.querySelectorAll(DARK)].some((el) => {
+    const r = el.getBoundingClientRect()
+    return r.top < 90 && r.bottom > 120
+  })
+}
+
+onMounted(() => {
+  update()
+  window.addEventListener('scroll', update, { passive: true })
+  window.addEventListener('resize', update)
+})
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', update)
+  window.removeEventListener('resize', update)
+})
+watch(() => route.path, () => nextTick(update))
 </script>
 
 <template>
-  <nav class="dock" aria-label="Основная навигация">
+  <nav class="dock" :class="{ 'on-hero': onHero }" aria-label="Основная навигация">
     <NuxtLink to="/" :class="{ active: isActive('/') }">
       <AppIcon name="home" />Главная
     </NuxtLink>
     <NuxtLink to="/yagyi" :class="{ active: isActive('/yagyi') }">
-      <AppIcon name="leaf" />Ягьи
+      <AppIcon name="leaf" />Практики
     </NuxtLink>
     <button class="spark" aria-label="Пройти опрос" @click="openQuiz()">
       <AppIcon name="spark" />

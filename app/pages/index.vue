@@ -1,22 +1,24 @@
 <script setup lang="ts">
 import type { ThemeKey } from '~/composables/useCatalog'
 
-const { openQuiz } = useQuiz()
-const { THEME_TILES, REVIEWS, YAGYI, TURY } = useCatalog()
+const { openQuiz, openSignup } = useQuiz()
+const { THEME_TILES, REVIEWS, YAGYI, PRAKTIKI, TURY, plural } = useCatalog()
 
-// «Огонь под ваш запрос»: выбранная тема → её ритуалы и фото огня
+// «Что поможет с вашим запросом»: тема → практики (делаете сами) и ягьи (делают за вас)
 const theme = ref<ThemeKey>('money')
-const THEME_IMG: Record<ThemeKey, string> = {
-  money: '/images/y1.jpg',
-  health: '/images/y2.jpg',
-  protect: '/images/y3.jpg',
-  love: '/images/y1.jpg',
-  spirit: '/images/y3.jpg',
-  work: '/images/y2.jpg'
-}
-const FIRE_IMGS = ['/images/y1.jpg', '/images/y2.jpg', '/images/y3.jpg']
+const practices = computed(() => PRAKTIKI.filter(p => p.cat === theme.value))
 const rituals = computed(() => YAGYI.filter(y => y.cat === theme.value))
-const activeTile = computed(() => THEME_TILES.find(t => t.key === theme.value))
+
+// Подпись у темы: «практика и 2 ягьи»
+function themeCount(key: ThemeKey) {
+  const p = PRAKTIKI.filter(x => x.cat === key).length
+  const y = YAGYI.filter(x => x.cat === key).length
+  const parts = [
+    p && (p === 1 ? 'практика' : `${p} ${plural(p, 'практика', 'практики', 'практик')}`),
+    y && (y === 1 ? 'ягья' : `${y} ${plural(y, 'ягья', 'ягьи', 'ягий')}`)
+  ].filter(Boolean)
+  return parts.join(' и ')
+}
 
 // На устройствах с мышью тема переключается наведением, на touch — нажатием
 function hoverTheme(e: PointerEvent, key: ThemeKey) {
@@ -223,7 +225,7 @@ onBeforeUnmount(() => {
           <span class="name">Взгляд сверху</span>
         </div>
         <nav class="topnav">
-          <NuxtLink to="/yagyi">Ягьи</NuxtLink>
+          <NuxtLink to="/yagyi">Практики</NuxtLink>
           <NuxtLink to="/tury">Туры</NuxtLink>
           <NuxtLink to="/o-nas">О нас</NuxtLink>
           <button class="enter" @click="openQuiz()">
@@ -336,7 +338,7 @@ onBeforeUnmount(() => {
           <div class="guide">
             <div class="portrait">
               <div class="arch">
-                <img src="/images/expert-2.webp" alt="Александра Андреева">
+                <img src="/images/expert-2.jpg" alt="Александра Андреева">
               </div>
             </div>
             <div class="about">
@@ -344,25 +346,25 @@ onBeforeUnmount(() => {
                 Александра Андреева
               </div>
               <div class="tags">
-                <span>Смрити-медитация</span><span>Интегральный психолог</span><span>Джйотиш</span>
+                <span>Джйотиш</span><span>Интегральный психолог</span><span>Смрити-медитация</span>
               </div>
               <p class="bio">
-                Помогаю трансформировать сознание — работаю с подсознательными причинами, чтобы перемены были устойчивыми, а не на время.
+                Помогаю найти выход из сложных ситуаций и принять верное решение. Смотрю вашу астрологическую карту (Джйотиш), чтобы понять, что сейчас происходит, и подбираю методы коррекции: от психологических практик и медитаций — до телесных и энергетических. Вы получите понятный план действий и внутреннюю устойчивость.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- Ягьи: тема слева → ритуалы справа -->
+      <!-- Подбор по теме: тема слева → практики и ягьи справа -->
       <section class="altar env-paper paper-ember" aria-labelledby="altar-title">
         <span class="deco-mandala tr" data-par="0.05" aria-hidden="true"><AppOrnament name="mandala" /></span>
         <div class="altar-head" data-reveal>
           <h2 id="altar-title" class="h2">
-            Огонь под ваш запрос
+            Что поможет с вашим запросом
           </h2>
           <p class="lead">
-            Выберите, что сейчас важнее всего, — покажем ритуалы и ближайшие благоприятные даты.
+            Выберите тему — покажем практику, которую вы проходите сами, и ягьи, которые проведут за вас в Индии.
           </p>
         </div>
 
@@ -385,40 +387,60 @@ onBeforeUnmount(() => {
             >
               <span class="intent-ic" aria-hidden="true"><AppIcon :name="th.key" /></span>
               <span class="intent-name">{{ th.tn }}</span>
-              <span class="intent-count">{{ th.tc }}</span>
+              <span class="intent-count">{{ themeCount(th.key) }}</span>
             </button>
           </div>
 
           <div id="altar-panel" class="altar-panel" role="tabpanel" :aria-labelledby="`intent-${theme}`">
-            <AppOrnament name="kolam" class="corner tl" />
-            <div class="ap-photo">
-              <img
-                v-for="src in FIRE_IMGS"
-                :key="src"
-                :src="src"
-                alt=""
-                :class="{ on: THEME_IMG[theme] === src }"
-              >
-              <span class="ap-theme">{{ activeTile?.tn }}</span>
-            </div>
-            <ul class="ap-list">
-              <li v-for="r in rituals" :key="r.n">
-                <button type="button" class="ap-row" @click="openQuiz(r.cat)">
-                  <span class="ap-main">
-                    <span class="ap-name">{{ r.n }}</span>
-                    <span class="ap-for">{{ r.p }}</span>
-                  </span>
-                  <span class="ap-meta">
-                    <span class="ap-date">ближайшая {{ r.d }}</span>
-                    <span class="ap-price">{{ r.pr }}</span>
-                  </span>
-                  <span class="ap-go" aria-hidden="true"><AppIcon name="arrow" :sw="2" /></span>
-                </button>
-              </li>
-            </ul>
-            <NuxtLink :to="`/yagyi?theme=${theme}`" class="seeall ap-all">
-              Все ягьи темы «{{ activeTile?.tn }}»<AppIcon name="arrow" :sw="2" />
-            </NuxtLink>
+            <Transition name="ap-swap" mode="out-in">
+              <div :key="theme" class="ap-body">
+                <div v-if="practices.length" class="ap-group ap-group-practice">
+                  <p class="ap-group-name">
+                    Делаете сами<span>практика с наставником, онлайн</span>
+                  </p>
+                  <ul class="ap-list">
+                    <li v-for="p in practices" :key="p.n">
+                      <button type="button" class="ap-row" @click="openSignup('practice', p.n)">
+                        <span class="ap-main">
+                          <span class="ap-name">{{ p.n }}</span>
+                          <span class="ap-for">{{ p.p }}</span>
+                        </span>
+                        <span class="ap-meta">
+                          <span class="ap-date">{{ p.dur }}</span>
+                          <span class="ap-price">{{ p.fmt }}</span>
+                        </span>
+                        <span class="ap-go">Записаться</span>
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+
+                <div v-if="rituals.length" class="ap-group ap-group-yagya">
+                  <p class="ap-group-name">
+                    Делают за вас<span>ягья у живого огня в Индии</span>
+                  </p>
+                  <ul class="ap-list">
+                    <li v-for="r in rituals" :key="r.n">
+                      <button type="button" class="ap-row" @click="openSignup('yagya', r.n)">
+                        <span class="ap-main">
+                          <span class="ap-name">{{ r.n }}</span>
+                          <span class="ap-for">{{ r.p }}</span>
+                        </span>
+                        <span class="ap-meta">
+                          <span class="ap-date">ближайшая {{ r.d }}</span>
+                          <span class="ap-price">{{ r.pr }}</span>
+                        </span>
+                        <span class="ap-go">Записаться</span>
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+
+                <NuxtLink to="/yagyi" class="seeall ap-all">
+                  Все практики и ягьи<AppIcon name="arrow" :sw="2" />
+                </NuxtLink>
+              </div>
+            </Transition>
           </div>
         </div>
       </section>

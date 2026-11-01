@@ -1,12 +1,12 @@
 <script setup lang="ts">
-const { YAGYI, YAGYA_FILTERS, plural } = useCatalog()
-const { openQuiz } = useQuiz()
+const { YAGYI, PRAKTIKI, YAGYA_FILTERS, plural } = useCatalog()
+const { openQuiz, openSignup } = useQuiz()
 const route = useRoute()
 const router = useRouter()
 
 useSeoMeta({
-  title: 'Ягьи',
-  description: 'Ягья — древний огненный ритуал. Жрецы в Индии проводят его под ваш запрос в благоприятное для вас время.'
+  title: 'Практики и ягьи',
+  description: 'Практики вы проходите сами с наставником онлайн: медитация, мантры, камни, йога. Ягьи за вас проводят жрецы в Индии. Подбираем по вашей ведической карте.'
 })
 
 const validCats = YAGYA_FILTERS.map(f => f.cat)
@@ -36,6 +36,8 @@ const items = computed(() => {
 })
 
 const countText = computed(() => `${items.value.length} ${plural(items.value.length, 'ягья', 'ягьи', 'ягий')}`)
+const practicesCount = `${PRAKTIKI.length} ${plural(PRAKTIKI.length, 'практика', 'практики', 'практик')}`
+const yagyiCount = `${YAGYI.length} ${plural(YAGYI.length, 'ягья', 'ягьи', 'ягий')}`
 
 // Счётчики на кнопках тем
 const counts = computed(() => {
@@ -44,16 +46,49 @@ const counts = computed(() => {
   return m
 })
 
-// Бегущая строка божеств (дважды — для бесшовной петли)
-const gods = [...new Set(YAGYI.map(y => y.god))]
+/**
+ * Две «арки» первого экрана: одинаковые строки, чтобы разницу было видно с одного взгляда.
+ * Порядок строк в обеих арках совпадает — так их можно читать поперёк.
+ */
+const GATES = [
+  {
+    key: 'practice',
+    to: 'practices',
+    who: 'Делаете сами',
+    title: 'Практики',
+    rows: [
+      { k: 'Кто делает', v: 'Вы, а наставник ведёт и поправляет' },
+      { k: 'Как проходит', v: 'Онлайн, из дома — от одной встречи до 40 дней' },
+      { k: 'Когда выбирать', v: 'Хотите сами изменить состояние, привычки, отношение к ситуации' }
+    ],
+    cta: 'Смотреть практики',
+    count: practicesCount
+  },
+  {
+    key: 'yagya',
+    to: 'catalog',
+    who: 'Делают за вас',
+    title: 'Ягьи',
+    rows: [
+      { k: 'Кто делает', v: 'Жрецы в Индии, вам ехать не нужно' },
+      { k: 'Как проходит', v: 'Огненный обряд в храме, в благоприятный для вас день' },
+      { k: 'Когда выбирать', v: 'Нужна сильная поддержка: деньги, здоровье, защита, отношения' }
+    ],
+    cta: 'Смотреть ягьи',
+    count: yagyiCount
+  }
+]
 
-// Ягья — слово по буквам для анимации входа
-const word = ['Я', 'г', 'ь', 'я']
+const PRACTICE_STEPS = [
+  'Оставляете заявку на практику',
+  'Знакомимся и смотрим вашу карту',
+  'Занимаетесь онлайн, наставник на связи'
+]
 
-const STEPS = [
-  { t: 'Вы называете запрос', d: 'Выбираете тему в каталоге или проходите короткий опрос — подскажем, какая ягья подходит.' },
-  { t: 'Жрецы проводят ритуал', d: 'В Индии, у живого огня, в благоприятное для вас время — по традиции, с мантрами и подношениями.' },
-  { t: 'Эксперт на связи', d: 'Оставляете заявку, эксперт подтверждает дату и отвечает на ваши вопросы.' }
+const YAGYA_STEPS = [
+  'Выбираете ягью под свой запрос',
+  'Эксперт подтверждает благоприятный день',
+  'Жрецы проводят обряд в Индии'
 ]
 
 // Скользящий индикатор активной темы
@@ -68,6 +103,8 @@ function moveIndicator() {
   ind.ready = true
 }
 onMounted(() => {
+  // С плиток тем на главной (?theme=) приходят за ягьями — сразу к каталогу
+  if (route.query.theme) document.getElementById('catalog')?.scrollIntoView({ block: 'start' })
   moveIndicator()
   window.addEventListener('resize', moveIndicator)
   document.fonts?.ready.then(moveIndicator)
@@ -75,111 +112,140 @@ onMounted(() => {
 onBeforeUnmount(() => window.removeEventListener('resize', moveIndicator))
 watch(cat, () => nextTick(moveIndicator))
 
-// Линия между шагами прорисовывается, когда блок попадает в видимую область
-const threadWrap = ref<HTMLElement | null>(null)
-onMounted(() => {
-  const n = threadWrap.value
-  if (!n) return
-  const io = new IntersectionObserver(([e]) => {
-    if (!e?.isIntersecting) return
-    n.classList.add('is-in')
-    io.disconnect()
-  }, { threshold: 0.35 })
-  io.observe(n)
-  onBeforeUnmount(() => io.disconnect())
-})
-
-function toCatalog() {
-  document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+function scrollToId(id: string) {
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
 </script>
 
 <template>
   <div class="yg">
-    <!-- ======== Первый экран: словарная статья ======== -->
-    <header class="yg-hero">
+    <!-- ======== Первый экран: развилка «сами / за вас» ======== -->
+    <header class="yg-hero pg-hero">
       <InnerTop overlay />
       <img class="yg-hero-bg" src="/images/hero.jpg" alt="" aria-hidden="true">
-      <div class="yg-hero-scrim" aria-hidden="true" />
-      <div class="yg-yantra" data-par="0.05" aria-hidden="true">
-        <AppOrnament name="mandala" />
-      </div>
-      <img class="yg-fire" src="/images/fire.png" alt="" aria-hidden="true">
-      <EmberField :ox="0.5" :oy="0.8" :count="90" :spread="260" />
+      <div class="yg-hero-scrim pg-scrim" aria-hidden="true" />
 
-      <div class="yg-hero-in">
-        <p class="yg-ety">
-          <span class="yg-sa" lang="sa">यज्ञ</span>
-          <span class="yg-ety-tx">yajña, санскрит — «служение огню, жертвоприношение»</span>
-        </p>
-
-        <h1 class="yg-word" aria-label="Ягья">
-          <span
-            v-for="(l, i) in word"
-            :key="i"
-            class="yg-letter"
-            :style="{ '--i': i }"
-            aria-hidden="true"
-          >{{ l }}</span>
+      <div class="pg-hero-in">
+        <h1 class="pg-title">
+          Практики и ягьи
         </h1>
-
-        <p class="yg-def">
-          Древний обряд: жрец у живого огня читает мантры и подносит дары божеству.
-          Обращаются к ягье, когда нужны деньги, здоровье, защита, любовь или ясность.
-          Вы называете запрос — ритуал проводят в Индии в благоприятное для вас время.
+        <p class="pg-lead">
+          Два способа работать с тем, что показала ваша карта. Выберите, что ближе.
         </p>
 
-        <div class="yg-cta-row">
-          <button class="yg-btn yg-btn-fire" @click="openQuiz()">
-            <AppIcon name="spark" />Подобрать ягью
-          </button>
-          <button class="yg-btn yg-btn-ghost" @click="toCatalog">
-            Смотреть каталог<AppIcon name="arrow" :sw="2" />
-          </button>
+        <div class="pg-gates">
+          <section
+            v-for="(g, i) in GATES"
+            :key="g.key"
+            class="pg-gate"
+            :class="{ 'pg-gate-yagya': g.key === 'yagya' }"
+            :style="{ '--i': i }"
+            :aria-labelledby="`gate-${g.key}`"
+          >
+            <p class="pg-gate-who">
+              {{ g.who }}
+            </p>
+            <h2 :id="`gate-${g.key}`" class="pg-gate-title">
+              {{ g.title }}
+            </h2>
+            <dl class="pg-gate-rows">
+              <div v-for="r in g.rows" :key="r.k">
+                <dt>{{ r.k }}</dt>
+                <dd>{{ r.v }}</dd>
+              </div>
+            </dl>
+            <button type="button" class="pg-gate-btn" @click="scrollToId(g.to)">
+              {{ g.cta }}
+              <small>{{ g.count }}</small>
+            </button>
+          </section>
         </div>
-      </div>
 
-      <div class="yg-marquee" aria-hidden="true">
-        <div class="yg-marquee-track">
-          <template v-for="n in 2" :key="n">
-            <span v-for="g in gods" :key="g + n" class="yg-god">{{ g }}<i /></span>
-          </template>
-        </div>
+        <p class="pg-unsure">
+          Не знаете, что подходит?
+          <button type="button" @click="openQuiz()">
+            Ответьте на 3 вопроса
+          </button>
+          — подскажем, с чего начать.
+        </p>
       </div>
       <div class="yg-hero-fade" aria-hidden="true" />
     </header>
 
-    <!-- ======== Как это работает ======== -->
-    <section class="yg-how wrap" aria-labelledby="how-title">
-      <h2 id="how-title" class="yg-h2" data-reveal>
-        Как это работает
-      </h2>
-      <div ref="threadWrap" class="yg-thread-wrap">
-        <svg class="yg-thread" viewBox="0 0 1000 40" preserveAspectRatio="none" aria-hidden="true">
-          <path pathLength="1" d="M0 20 C 150 -6, 260 46, 400 20 S 650 -6, 800 20 S 940 40, 1000 20" />
-        </svg>
-        <ol class="yg-steps" data-reveal-stagger>
-          <li v-for="(s, i) in STEPS" :key="s.t" class="yg-step">
-            <span class="yg-step-n">{{ i + 1 }}</span>
-            <h3>{{ s.t }}</h3>
-            <p>{{ s.d }}</p>
+    <!-- ======== Практики ======== -->
+    <section id="practices" class="pg-sec pg-practices" aria-labelledby="pr-title">
+      <div class="wrap">
+        <div class="pg-head">
+          <h2 id="pr-title" class="yg-h2">
+            Практики
+          </h2>
+          <p>
+            Вы занимаетесь сами, наставник подбирает практику по карте и ведёт вас до результата.
+            Всё проходит онлайн.
+          </p>
+        </div>
+
+        <ol class="pg-steps" aria-label="Как проходит практика">
+          <li v-for="(s, i) in PRACTICE_STEPS" :key="s">
+            <span class="pg-step-n">{{ i + 1 }}</span>{{ s }}
+          </li>
+        </ol>
+
+        <ul class="pg-list">
+          <li v-for="p in PRAKTIKI" :key="p.n" class="pg-row" :data-theme="p.cat">
+            <span class="pg-row-ic" aria-hidden="true"><AppIcon :name="p.cat" :sw="1.6" /></span>
+            <div class="pg-row-name">
+              <h3>{{ p.n }}</h3>
+              <p>Ведёт {{ p.who }}</p>
+            </div>
+            <p class="pg-row-what">
+              {{ p.p }}
+            </p>
+            <dl class="pg-row-meta">
+              <div>
+                <dt>Формат</dt>
+                <dd>{{ p.fmt }}</dd>
+              </div>
+              <div>
+                <dt>Длительность</dt>
+                <dd>{{ p.dur }}</dd>
+              </div>
+              <div>
+                <dt>Стоимость</dt>
+                <dd>{{ p.pr }}</dd>
+              </div>
+            </dl>
+            <button type="button" class="pg-row-btn" @click="openSignup('practice', p.n)">
+              Записаться<span class="sr-only">: {{ p.n }}</span>
+            </button>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ======== Ягьи: объяснение на «огненной» полосе ======== -->
+    <section class="pg-fireband" aria-labelledby="cat-title">
+      <div class="wrap pg-fire-in">
+        <div class="pg-head pg-head-light">
+          <h2 id="cat-title" class="yg-h2">
+            Ягьи
+          </h2>
+          <p>
+            Ягья — древний огненный обряд. Жрец у живого огня читает мантры и подносит дары божеству.
+            Его проводят в Индии за вас — вы только выбираете тему.
+          </p>
+        </div>
+        <ol class="pg-steps pg-steps-light" aria-label="Как проходит ягья">
+          <li v-for="(s, i) in YAGYA_STEPS" :key="s">
+            <span class="pg-step-n">{{ i + 1 }}</span>{{ s }}
           </li>
         </ol>
       </div>
     </section>
 
-    <!-- ======== Каталог ======== -->
-    <section id="catalog" class="yg-catalog" aria-labelledby="cat-title">
+    <!-- ======== Каталог ягий ======== -->
+    <section id="catalog" class="yg-catalog pg-catalog" aria-label="Каталог ягий">
       <div class="wrap">
-        <div class="yg-cat-head">
-          <h2 id="cat-title" class="yg-h2" data-reveal>
-            Выберите, с чем нужна помощь
-          </h2>
-          <p data-reveal>
-            Каждая ягья обращена к своему божеству и своей теме. Выберите тему — покажем подходящие обряды.
-          </p>
-        </div>
-
         <div class="yg-bar">
           <div class="yg-chips" role="tablist" aria-label="Тема ягьи">
             <span
@@ -225,7 +291,7 @@ function toCatalog() {
             :purpose="y.p"
             :date="y.d"
             :price="y.pr"
-            @select="openQuiz(y.cat)"
+            @select="openSignup('yagya', y.n)"
           />
         </TransitionGroup>
         <div v-else class="yg-empty">
@@ -237,12 +303,11 @@ function toCatalog() {
     <!-- ======== Финал: не знаете, что выбрать ======== -->
     <section class="yg-final" aria-labelledby="final-title">
       <img class="yg-final-fire" src="/images/fire.png" alt="" aria-hidden="true">
-      <EmberField :ox="0.5" :oy="0.95" :count="46" :spread="180" />
       <div class="wrap yg-final-in" data-reveal>
         <h2 id="final-title">
-          Не знаете, какая ягья вам нужна?
+          Не знаете, с чего начать?
         </h2>
-        <p>Ответьте на три вопроса — подберём ритуал и ближайшую дату.</p>
+        <p>Ответьте на три вопроса о вашем запросе — подскажем, что подойдёт: практика, ягья или сначала разбор карты.</p>
         <button class="yg-btn yg-btn-fire" @click="openQuiz()">
           <AppIcon name="spark" />Пройти опрос
         </button>

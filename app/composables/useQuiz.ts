@@ -8,6 +8,8 @@ import type { ThemeKey } from './useCatalog'
 export interface Intent { id: ThemeKey, title: string, hint: string }
 export interface Duration { v: string, label: string }
 export interface ResultYagya { n: string, d: string }
+/** Прямая запись на конкретную услугу — без вопросов опросника */
+export interface Signup { kind: 'practice' | 'yagya', name: string }
 
 const INTENTS: Intent[] = [
   { id: 'health', title: 'Здоровье и силы', hint: 'Восстановление' },
@@ -44,6 +46,7 @@ export function useQuiz() {
   const submitting = useState('quiz-submitting', () => false)
   const submitted = useState('quiz-submitted', () => false)
   const errorMsg = useState<string | null>('quiz-error', () => null)
+  const signup = useState<Signup | null>('quiz-signup', () => null)
 
   const intentTitle = computed(() => INTENTS.find(i => i.id === intent.value)?.title || '—')
   const durationLabel = computed(() => DURATIONS.find(d => d.v === dur.value)?.label || '')
@@ -60,11 +63,20 @@ export function useQuiz() {
     submitting.value = false
     submitted.value = false
     errorMsg.value = null
+    signup.value = null
   }
 
   function openQuiz(preset?: ThemeKey) {
     reset()
     if (preset) intent.value = preset
+    open.value = true
+  }
+
+  /** Открыть сразу форму записи на выбранную практику/ягью; из опросника — с сохранением введённого */
+  function openSignup(kind: Signup['kind'], serviceName: string) {
+    if (!open.value) reset()
+    errorMsg.value = null
+    signup.value = { kind, name: serviceName }
     open.value = true
   }
 
@@ -92,18 +104,21 @@ export function useQuiz() {
     submitting.value = true
     errorMsg.value = null
     try {
+      const s = signup.value
+      // Запрос из опросника (если человек его прошёл) приложим и к прямой записи
+      const quizNote = intent.value ? `Запрос: ${intentTitle.value}. Срок: ${durationLabel.value || '—'}.` : ''
       await $fetch('/api/lead', {
         method: 'POST',
         body: {
-          type: 'consultation',
-          subject: intentTitle.value,
-          service: 'Разбор карты (опросник)',
+          type: s ? s.kind : 'consultation',
+          subject: s ? s.name : intentTitle.value,
+          service: s ? s.name : 'Разбор карты (опросник)',
           name: name.value.trim(),
           contact: contact.value.trim(),
           consent: true,
           consentVersion: LEGAL_VERSION,
-          intention: intentTitle.value,
-          message: `Запрос: ${intentTitle.value}. Срок: ${durationLabel.value}.`
+          intention: intent.value ? intentTitle.value : undefined,
+          message: s ? `Запись: ${s.name}. ${quizNote}`.trim() : quizNote
         }
       })
       submitted.value = true
@@ -125,6 +140,7 @@ export function useQuiz() {
     submitting,
     submitted,
     errorMsg,
+    signup,
     INTENTS,
     DURATIONS,
     intentTitle,
@@ -132,6 +148,7 @@ export function useQuiz() {
     resultYagyas,
     canNext,
     openQuiz,
+    openSignup,
     close,
     reset,
     next,

@@ -99,6 +99,29 @@ const YAGYA_STEPS = [
   'Жрецы проводят обряд в Индии'
 ]
 
+// Кадры обряда в огненной полосе (видео — отдельно, см. riteVideo)
+const RITE_PHOTOS = [
+  { src: '/images/trips/yagya-fire.webp', alt: 'Жрецы читают мантры у огня во время ягьи', cap: 'Ягья: мантры у живого огня' },
+  { src: '/images/trips/yagya-rite.webp', alt: 'Жрецы готовят подношения перед обрядом', cap: 'Подготовка подношений' },
+  { src: '/images/trips/priest.webp', alt: 'Портрет жреца, который проводит ягьи', cap: 'Обряд проводят жрецы храма' }
+]
+
+// Видео огня играет без звука, только пока его видно; при reduced-motion — не играет само, есть кнопки
+const riteVideo = ref<HTMLVideoElement | null>(null)
+const reduceMotion = ref(false)
+let riteIO: IntersectionObserver | null = null
+onMounted(() => {
+  reduceMotion.value = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const v = riteVideo.value
+  if (!v || reduceMotion.value) return
+  riteIO = new IntersectionObserver(([e]) => {
+    if (e?.isIntersecting) v.play().catch(() => {})
+    else v.pause()
+  }, { threshold: 0.3 })
+  riteIO.observe(v)
+})
+onBeforeUnmount(() => riteIO?.disconnect())
+
 // Скользящий индикатор активной темы
 const chipRefs = ref<HTMLElement[]>([])
 const ind = reactive({ x: 0, w: 0, ready: false })
@@ -248,6 +271,32 @@ function scrollToId(id: string) {
             <span class="pg-step-n">{{ i + 1 }}</span>{{ s }}
           </li>
         </ol>
+
+        <!-- Настоящие кадры обряда: видео огня, ягья, подготовка, жрец -->
+        <ul class="pg-rite" aria-label="Как проходит ягья: фото и видео">
+          <li>
+            <figure>
+              <video
+                ref="riteVideo"
+                src="/videos/yagya-fire.mp4"
+                poster="/videos/yagya-fire-poster.webp"
+                muted
+                loop
+                playsinline
+                preload="none"
+                :controls="reduceMotion || undefined"
+                aria-label="Видео: жрец подносит дары огню"
+              />
+              <figcaption>Жрец подносит дары огню</figcaption>
+            </figure>
+          </li>
+          <li v-for="ph in RITE_PHOTOS" :key="ph.src">
+            <figure>
+              <img :src="ph.src" :alt="ph.alt" loading="lazy">
+              <figcaption>{{ ph.cap }}</figcaption>
+            </figure>
+          </li>
+        </ul>
       </div>
     </section>
 

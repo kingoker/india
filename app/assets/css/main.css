@@ -4136,3 +4136,58 @@ section { padding: 76px 0 0; }
 @media (max-width: 860px) {
   .home h1 { font-size: clamp(40px, 11.5vw, 60px); line-height: .98; }
 }
+
+/* ============================================================
+   ✦ ФОТО ИЗ ПОЕЗДОК (ноябрь 2026)
+   Настоящие кадры там, где решается доверие: как проходит ягья,
+   кто уже ездил, как выглядит маршрут.
+   ============================================================ */
+
+/* ---------- Аркада обряда на огненной полосе /yagyi ---------- */
+.pg-rite {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(14px, 2vw, 28px);
+  margin: clamp(40px, 6vh, 64px) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.pg-rite figure { margin: 0; }
+.pg-rite img,
+.pg-rite video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: 50% 50% 14px 14px / 30% 30% 14px 14px;
+  background: #1A0D06;
+  box-shadow: 0 0 0 1px rgba(243, 217, 142, .38), 0 30px 60px -34px rgba(0, 0, 0, .9);
+}
+.pg-rite figcaption { margin-top: 12px; font-size: 14px; line-height: 1.45; color: rgba(253, 246, 230, .78); }
+@media (max-width: 860px) {
+  /* Телефон: аркада листается пальцем, соседний кадр подглядывает */
+  .pg-rite {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: 62vw;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    /* до краёв экрана: .wrap на телефоне даёт поля 22px */
+    margin-inline: -22px;
+    padding-inline: 22px;
+    scroll-padding-inline: 22px;
+  }
+  .pg-rite::-webkit-scrollbar { display: none; }
+  .pg-rite li { scroll-snap-align: start; }
+}
+
+/* ---------- Фото групп среди отзывов на главной ---------- */
+.home .trust .review--photo { padding: 0; gap: 0; overflow: hidden; }
+.home .trust .review--photo img { display: block; width: 100%; height: auto; }
+.home .trust .review--photo figcaption {
+  margin: 0;
+  padding: 14px clamp(18px, 2vw, 24px) 16px;
+  font-size: 13.5px;
+  color: rgba(253, 246, 230, .74);
+}

@@ -41,6 +41,19 @@ function tourDays(d: string) {
   return { n, unit: rest.join(' ') }
 }
 const { openForm: openReviewForm, playVideo } = useReviews()
+
+// Фото групп из поездок — вперемешку с отзывами: слова и лица одних и тех же людей
+const TRIP_PHOTOS = [
+  { src: '/images/trips/group-garlands.webp', w: 1200, h: 1078, alt: 'Группа в гирляндах из бархатцев после ягьи', cap: 'Группа после ягьи в храме' },
+  { src: '/images/trips/group-kolam.webp', w: 1200, h: 900, alt: 'Участницы поездки сидят на узоре-колам во дворе храма', cap: 'Во дворе храма, Тамилнад' },
+  { src: '/images/trips/group-nandi.webp', w: 1200, h: 675, alt: 'Группа у статуи быка Нанди у древнего храма', cap: 'У Нанди, Тамилнад' }
+]
+// Фото встают после 1-го, 3-го и 5-го отзыва
+type TrustItem = { r: (typeof REVIEWS)[number] } | { photo: (typeof TRIP_PHOTOS)[number] }
+const trustItems = computed(() => REVIEWS.flatMap((r, i): TrustItem[] => {
+  const photo = TRIP_PHOTOS[[0, 2, 4].indexOf(i)]
+  return photo ? [{ r }, { photo }] : [{ r }]
+}))
 const { FAQ } = useFaq()
 const config = useRuntimeConfig()
 
@@ -452,32 +465,38 @@ onBeforeUnmount(() => {
         </div>
 
         <div class="reviews" data-reveal-stagger>
-          <template v-for="(r, i) in REVIEWS" :key="i">
+          <template v-for="(item, i) in trustItems" :key="i">
+            <!-- Фото группы из поездки -->
+            <figure v-if="'photo' in item" class="review review--photo">
+              <img :src="item.photo.src" :alt="item.photo.alt" :width="item.photo.w" :height="item.photo.h" loading="lazy">
+              <figcaption>{{ item.photo.cap }}</figcaption>
+            </figure>
+
             <!-- Видеоотзыв -->
-            <figure v-if="r.video" class="review review--video">
+            <figure v-else-if="item.r.video" class="review review--video">
               <button
                 class="vthumb"
-                :style="r.video.poster ? { backgroundImage: `url(${r.video.poster})` } : undefined"
-                :aria-label="`Смотреть видеоотзыв${r.video.title ? `: ${r.video.title}` : ''}`"
-                @click="playVideo(r.video)"
+                :style="item.r.video.poster ? { backgroundImage: `url(${item.r.video.poster})` } : undefined"
+                :aria-label="`Смотреть видеоотзыв${item.r.video.title ? `: ${item.r.video.title}` : ''}`"
+                @click="playVideo(item.r.video)"
               >
                 <span class="vplay" aria-hidden="true">
                   <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5-11-6.5Z" /></svg>
                 </span>
               </button>
               <figcaption>
-                <AppStars :value="r.stars" :size="17" />
-                <span v-if="r.tag" class="rtag">{{ r.video.title || r.tag }}</span>
+                <AppStars :value="item.r.stars" :size="17" />
+                <span v-if="item.r.tag" class="rtag">{{ item.r.video.title || item.r.tag }}</span>
               </figcaption>
             </figure>
 
             <!-- Текстовый отзыв -->
             <figure v-else class="review">
-              <AppStars :value="r.stars" :size="17" />
-              <blockquote>{{ r.text }}</blockquote>
+              <AppStars :value="item.r.stars" :size="17" />
+              <blockquote>{{ item.r.text }}</blockquote>
               <figcaption>
-                <span v-if="r.name" class="rn">{{ r.name }}</span>
-                <span v-if="r.tag" class="rtag">{{ r.tag }}</span>
+                <span v-if="item.r.name" class="rn">{{ item.r.name }}</span>
+                <span v-if="item.r.tag" class="rtag">{{ item.r.tag }}</span>
               </figcaption>
             </figure>
           </template>

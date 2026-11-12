@@ -26,16 +26,24 @@ function setCat(c: string) {
   router.replace({ query: c === 'all' ? {} : { theme: c } })
 }
 
+// Каталог — «альманах огня»: ягьи идут по ближайшей дате («5 окт» → ключ сортировки)
+const MONTHS = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек']
+function dateKey(d: string) {
+  const [n, m = ''] = d.split(' ')
+  const mi = MONTHS.indexOf(m.slice(0, 3))
+  return mi < 0 ? 9999 : mi * 100 + Number(n)
+}
+
 const items = computed(() => {
   const query = q.value.trim().toLowerCase()
   return YAGYI.filter((o) => {
     const okCat = cat.value === 'all' || o.cat === cat.value
     const okQ = !query || (`${o.n} ${o.god} ${o.p} ${o.cl}`).toLowerCase().includes(query)
     return okCat && okQ
-  })
+  }).sort((a, b) => dateKey(a.d) - dateKey(b.d))
 })
 
-const countText = computed(() => `${items.value.length} ${plural(items.value.length, 'ягья', 'ягьи', 'ягий')}`)
+const countText = computed(() => `${items.value.length} ${plural(items.value.length, 'ягья', 'ягьи', 'ягий')}, по ближайшей дате`)
 const practicesCount = `${PRAKTIKI.length} ${plural(PRAKTIKI.length, 'практика', 'практики', 'практик')}`
 const yagyiCount = `${YAGYI.length} ${plural(YAGYI.length, 'ягья', 'ягьи', 'ягий')}`
 
@@ -279,11 +287,10 @@ function scrollToId(id: string) {
           {{ countText }}
         </p>
 
-        <TransitionGroup v-if="items.length" name="yg-list" tag="div" class="yg-grid">
+        <TransitionGroup v-if="items.length" name="yg-list" tag="div" class="yg-ledger">
           <YagyaCard
-            v-for="(y, i) in items"
+            v-for="y in items"
             :key="y.n"
-            :index="i"
             :glyph="y.cat"
             :theme="y.cl"
             :title="y.n"

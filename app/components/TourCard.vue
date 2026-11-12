@@ -2,30 +2,22 @@
 /**
  * Тур-«билет» в каталоге: арка с фото (параллакс внутри рамки), печать с длительностью,
  * маршрут по остановкам, который прорисовывается при появлении в видимой области.
+ * На карточке — фото, название и маршрут; описание и программа открываются в окне «Подробнее».
  */
-const props = defineProps<{
-  title: string
-  region: string
-  purpose: string
-  days: string
-  price: string
-  route: string[]
-  img: string
-  pos: string
-  index?: number
-}>()
-defineEmits<{ select: [] }>()
+import type { Tour } from '~/composables/useCatalog'
+
+const props = defineProps<{ tour: Tour, index?: number }>()
+defineEmits<{ select: [], more: [] }>()
+
+const { TOUR_STATUS } = useCatalog()
+const status = computed(() => TOUR_STATUS[props.tour.status])
 
 const el = ref<HTMLElement | null>(null)
 
-// «10 дней» → число и единица; «10 дней — описание» → просто описание
+// «10 дней» → число и единица; пусто — длительность ещё не утверждена, печать не ставим
 const dur = computed(() => {
-  const [n, ...rest] = props.days.split(' ')
+  const [n, ...rest] = props.tour.d.split(' ')
   return { n, unit: rest.join(' ') }
-})
-const lead = computed(() => {
-  const t = props.purpose.replace(/^\d+\s+дн\S*\s+—\s+/, '')
-  return t.charAt(0).toUpperCase() + t.slice(1)
 })
 
 function track(e: PointerEvent) {
@@ -54,11 +46,11 @@ onMounted(() => {
     <span class="tr-tour-glow" aria-hidden="true" />
 
     <div class="tr-tour-media" data-par="0.07">
-      <div class="tr-arch">
-        <img :src="img" :style="{ objectPosition: pos }" alt="" loading="lazy">
+      <button class="tr-arch" :aria-label="`Подробнее: ${tour.n}`" @click="$emit('more')">
+        <img :src="tour.img" :style="{ objectPosition: tour.pos }" alt="" loading="lazy">
         <span class="tr-arch-tint" aria-hidden="true" />
-      </div>
-      <span class="tr-seal" aria-label="Длительность">
+      </button>
+      <span v-if="tour.d" class="tr-seal" :class="{ long: (dur.n?.length || 0) > 2 }" aria-label="Длительность">
         <svg viewBox="0 0 100 100" aria-hidden="true">
           <circle cx="50" cy="50" r="47" />
           <circle cx="50" cy="50" r="40" />
@@ -69,16 +61,16 @@ onMounted(() => {
     </div>
 
     <div class="tr-tour-body">
-      <span class="tr-tour-region">{{ region }}</span>
+      <span class="tr-tour-status" :data-status="tour.status">{{ status.label }}</span>
       <h3 class="tr-tour-name">
-        {{ title }}
+        {{ tour.n }}
       </h3>
-      <p class="tr-tour-lead">
-        {{ lead }}
+      <p class="tr-tour-sub">
+        {{ tour.sub }}
       </p>
 
       <ol class="tr-stops" aria-label="Маршрут">
-        <li v-for="(s, i) in route" :key="s" :style="{ '--k': i }">
+        <li v-for="(s, i) in tour.route" :key="s" :style="{ '--k': i }">
           <i aria-hidden="true" />{{ s }}
         </li>
       </ol>
@@ -86,11 +78,16 @@ onMounted(() => {
       <div class="tr-tour-foot">
         <div class="tr-tour-price">
           <small>стоимость</small>
-          <b>{{ price }}</b>
+          <b>{{ tour.pr }}</b>
         </div>
-        <button class="yg-btn yg-btn-fire tr-book" @click="$emit('select')">
-          Забронировать место<AppIcon name="arrow" :sw="2" />
-        </button>
+        <div class="tr-tour-acts">
+          <button class="tr-more" @click="$emit('more')">
+            Подробнее
+          </button>
+          <button class="yg-btn yg-btn-fire tr-book" @click="$emit('select')">
+            {{ status.cta }}<AppIcon name="arrow" :sw="2" />
+          </button>
+        </div>
       </div>
     </div>
   </article>

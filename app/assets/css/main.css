@@ -450,6 +450,35 @@ section { padding: 76px 0 0; }
 .cta-band p { font-size: 16px; color: #6A481C; margin: 8px 0 22px; }
 .cta-band .btn-primary { background: #2A1A10; color: #FBF3DE; }
 
+/* ============================== РАЗМЫТИЕ У НИЖНЕГО КРАЯ ==============================
+   Слои: blur 0.5 → 16px, у каждого маска-окно на свою полосу; низ размыт сильнее всего.
+   Ниже плавающего бара (z 40) и модалок (z 50). */
+.edge-blur {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 39;
+  height: 76px;
+  pointer-events: none;
+  transition: opacity .45s ease;
+}
+.edge-blur.at-end { opacity: 0; }
+.edge-blur i { position: absolute; inset: 0; }
+.edge-blur i:nth-child(1) { -webkit-backdrop-filter: blur(.5px); backdrop-filter: blur(.5px); mask: linear-gradient(transparent 0%, #000 12.5%, #000 25%, transparent 37.5%); }
+.edge-blur i:nth-child(2) { -webkit-backdrop-filter: blur(1px); backdrop-filter: blur(1px); mask: linear-gradient(transparent 12.5%, #000 25%, #000 37.5%, transparent 50%); }
+.edge-blur i:nth-child(3) { -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); mask: linear-gradient(transparent 25%, #000 37.5%, #000 50%, transparent 62.5%); }
+.edge-blur i:nth-child(4) { -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); mask: linear-gradient(transparent 37.5%, #000 50%, #000 62.5%, transparent 75%); }
+.edge-blur i:nth-child(5) { -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); mask: linear-gradient(transparent 50%, #000 62.5%, #000 75%, transparent 87.5%); }
+.edge-blur i:nth-child(6) { -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); mask: linear-gradient(transparent 62.5%, #000 75%); }
+/* Телефон: зона поднимается над нижним баром — контент растворяется, уходя под него */
+@media (max-width: 860px) {
+  .edge-blur { height: 136px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .edge-blur { transition: none; }
+}
+
 /* ============================== FLOATING BOTTOM NAV ============================== */
 .dock {
   position: fixed;
@@ -2089,8 +2118,8 @@ section { padding: 76px 0 0; }
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: clamp(16px, 2vw, 32px);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(22px, 3vh, 34px) clamp(16px, 2vw, 32px);
 }
 .route {
   position: relative;
@@ -2124,6 +2153,9 @@ section { padding: 76px 0 0; }
   letter-spacing: -.02em;
 }
 .route-days span { font-size: 13px; color: rgba(253, 246, 230, .75); margin-top: 2px; }
+.route-days { min-width: 1.4em; font-size: clamp(56px, 6vw, 92px); }
+.route-days.long b { font-size: .62em; }
+.route-days-ic svg { width: .62em; height: .62em; color: var(--gold-bright); }
 .route-name { grid-area: name; font-family: var(--font-display); font-size: clamp(20px, 1.8vw, 26px); font-weight: 600; line-height: 1.1; align-self: end; text-shadow: 0 1px 12px rgba(0, 0, 0, .5); }
 .route-area { grid-area: area; font-size: 13.5px; color: rgba(253, 246, 230, .78); margin-top: 4px; }
 .route-price { grid-area: price; font-size: 15px; font-weight: 500; color: var(--gold-bright); align-self: start; margin-top: 6px; }
@@ -2727,130 +2759,90 @@ section { padding: 76px 0 0; }
 .yg-count { margin: 0 0 18px; font-size: 13px; color: var(--ink-faint); }
 .yg-empty { padding: 64px 0; text-align: center; color: var(--ink-soft); font-size: 15px; }
 
-.yg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 22px; }
-.yg-grid .yg-list-move { transition: transform .7s cubic-bezier(.2, .8, .2, 1); }
 
-/* ---------- Карточка ягьи ---------- */
-.yg-card {
+/* ---------- Альманах огня: ягьи строками по ближайшей дате ----------
+   Тот же строчный язык, что у практик выше, но слева — дата обряда крупно.
+   Практики кодируются бирюзой, ягьи — огнём (кнопка шафрановая). */
+.yg-ledger { position: relative; border-top: 1px solid var(--gold-line); }
+.yg-ledger .yg-list-move { transition: transform .6s cubic-bezier(.2, .8, .2, 1); }
+/* Смена темы: строки уходят и приходят коротким затуханием — видно, что список изменился */
+.yg-ledger .yg-list-enter-active,
+.yg-ledger .yg-list-leave-active { transition: opacity .3s ease, transform .3s ease; }
+.yg-ledger .yg-list-leave-active { position: absolute; left: 0; right: 0; }
+.yg-ledger .yg-list-enter-from,
+.yg-ledger .yg-list-leave-to { opacity: 0; transform: translateY(8px); }
+.yg-entry {
   --tc: #C98A12;
-  --mx: 50%;
-  --my: 0%;
-  position: relative;
-  isolation: isolate;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 88px minmax(190px, 1fr) minmax(0, 1.3fr) 128px auto;
+  gap: 0 28px;
+  align-items: center;
   width: 100%;
-  padding: 0;
+  padding: 20px 10px 20px 0;
+  border: 0;
+  border-bottom: 1px solid var(--hair);
+  background: transparent;
   text-align: left;
-  overflow: hidden;
-  border-radius: 28px;
-  border: 1px solid var(--hair);
-  background: var(--paper-2);
   font-family: var(--font-body);
   color: var(--ink);
   cursor: pointer;
-  transition: transform .5s cubic-bezier(.2, .8, .2, 1), box-shadow .5s ease, border-color .3s ease;
+  transition: background-color .25s ease;
 }
-.yg-card[data-theme="money"] { --tc: #C98A12; }
-.yg-card[data-theme="health"] { --tc: #2F8A63; }
-.yg-card[data-theme="protect"] { --tc: #3E5AB0; }
-.yg-card[data-theme="love"] { --tc: #C2456B; }
-.yg-card[data-theme="spirit"] { --tc: #7C4DB0; }
-.yg-card[data-theme="work"] { --tc: #CB4B0E; }
-.yg-card::after {
-  content: "";
-  position: absolute;
-  z-index: 3;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 4px;
-  background: linear-gradient(90deg, transparent, var(--tc), transparent);
-  transform: scaleX(0);
-  transition: transform .6s cubic-bezier(.2, .8, .2, 1);
-}
-.yg-card-glow {
-  position: absolute;
-  z-index: -1;
-  inset: 0;
-  opacity: 0;
-  transition: opacity .4s ease;
-  background: radial-gradient(340px circle at var(--mx) var(--my), color-mix(in srgb, var(--tc) 24%, transparent), transparent 65%);
-}
-.yg-card:hover {
-  transform: translateY(-8px);
-  border-color: color-mix(in srgb, var(--tc) 55%, var(--hair));
-  box-shadow: 0 34px 50px -30px color-mix(in srgb, var(--tc) 70%, #3a2612);
-}
-.yg-card:hover::after { transform: scaleX(1); }
-.yg-card:hover .yg-card-glow { opacity: 1; }
-.yg-card:focus-visible { outline-color: var(--tc); }
-
-.yg-card-top {
-  position: relative;
+.yg-entry[data-theme="money"] { --tc: #C98A12; }
+.yg-entry[data-theme="health"] { --tc: #2F8A63; }
+.yg-entry[data-theme="protect"] { --tc: #3E5AB0; }
+.yg-entry[data-theme="love"] { --tc: #C2456B; }
+.yg-entry[data-theme="spirit"] { --tc: #7C4DB0; }
+.yg-entry[data-theme="work"] { --tc: #CB4B0E; }
+.yg-entry:hover { background-color: color-mix(in srgb, var(--tc) 7%, transparent); }
+.yg-entry:focus-visible { outline-offset: -2px; }
+.yg-entry-date {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding: 24px 24px 0;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--tc) 13%, var(--paper-2)) 0%, var(--paper-2) 100%);
-}
-.yg-card-sigil {
-  position: relative;
-  display: grid;
-  place-items: center;
-  width: 78px;
-  height: 78px;
-  color: var(--tc);
-}
-.yg-card-sigil > svg:last-child { width: 32px; height: 32px; transition: transform .6s cubic-bezier(.2, .8, .2, 1); }
-.yg-card:hover .yg-card-sigil > svg:last-child { transform: scale(1.18); }
-.yg-card-ring { position: absolute; inset: 0; width: 100%; height: 100%; fill: none; stroke: currentColor; }
-.yg-card-ring circle:first-child { stroke-width: 1; stroke-dasharray: 1 5; stroke-linecap: round; transform-origin: 50% 50%; animation: yg-spin 30s linear infinite; }
-.yg-card-ring circle:last-child { stroke-width: .8; opacity: .55; }
-.yg-card:hover .yg-card-ring circle:first-child { animation-duration: 6s; }
-.yg-card-date { text-align: right; line-height: 1; }
-.yg-card-date small { display: block; font-size: 11.5px; color: var(--ink-faint); margin-bottom: 4px; }
-.yg-card-date b { font-family: var(--font-display); font-size: 30px; font-weight: 600; color: var(--ink); }
-
-.yg-card-body { display: flex; flex-direction: column; flex: 1; padding: 18px 24px 20px; }
-.yg-card-theme {
-  align-self: flex-start;
-  margin-bottom: 10px;
-  padding: 4px 12px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 500;
-  color: color-mix(in srgb, var(--tc) 80%, #2A1A10);
-  background: color-mix(in srgb, var(--tc) 13%, transparent);
-}
-.yg-card-name { font-family: var(--font-display); font-size: 32px; font-weight: 600; line-height: 1; letter-spacing: -.005em; }
-.yg-card-deity { margin-top: 6px; font-size: 13px; color: var(--ink-faint); }
-.yg-card-purpose { margin-top: 12px; font-size: 14.5px; line-height: 1.55; color: var(--ink-soft); }
-.yg-card-foot {
-  display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin: 0 24px;
-  padding: 16px 0 20px;
-  border-top: 1px dashed var(--gold-line);
+  align-self: stretch;
+  justify-content: center;
+  line-height: 1;
+  border-right: 1px solid var(--gold-line);
 }
-.yg-card-price { font-size: 14px; font-weight: 500; color: var(--ink); }
-.yg-card-go {
+.yg-entry-date b {
+  font-family: var(--font-display);
+  font-size: 50px;
+  font-weight: 600;
+  font-variant-numeric: lining-nums;
+  color: var(--ink);
+}
+.yg-entry-date small { margin-top: 2px; font-size: 13px; font-weight: 500; color: var(--saffron-deep); }
+.yg-entry-main, .yg-entry-name, .yg-entry-deity { display: block; min-width: 0; }
+.yg-entry-name { font-family: var(--font-display); font-size: 30px; font-weight: 600; line-height: 1.04; }
+.yg-entry-deity { margin-top: 5px; font-size: 13.5px; color: var(--ink-faint); }
+.yg-entry-purpose { max-width: 44ch; font-size: 15px; line-height: 1.55; color: var(--ink-soft); }
+.yg-entry-theme {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   font-size: 14px;
   font-weight: 500;
-  color: var(--saffron-deep);
+  color: color-mix(in srgb, var(--tc) 82%, #2A1A10);
 }
-.yg-card-go svg { width: 16px; height: 16px; transition: transform .35s cubic-bezier(.2, .8, .2, 1); }
-.yg-card:hover .yg-card-go svg { transform: translateX(6px); }
-
-/* Появление карточек (только там, где работает reveal) */
-.reveal-ready .yg-card:not(.in) { opacity: 0; transform: translateY(40px) scale(.97); }
-.yg-card.in { animation: yg-card-in .9s cubic-bezier(.2, .8, .2, 1) calc(var(--i, 0) * 90ms) backwards; }
-@keyframes yg-card-in { from { opacity: 0; transform: translateY(40px) scale(.97); } }
+.yg-entry-theme svg { flex: none; width: 18px; height: 18px; }
+.yg-entry-end { display: flex; align-items: center; justify-content: flex-end; gap: 20px; }
+.yg-entry-price { font-size: 15px; font-weight: 500; white-space: nowrap; }
+.yg-entry-go {
+  display: inline-flex;
+  align-items: center;
+  height: 46px;
+  padding: 0 24px;
+  border: 1px solid color-mix(in srgb, var(--saffron) 55%, transparent);
+  border-radius: 999px;
+  color: var(--saffron-deep);
+  font-size: 15px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+}
+.yg-entry:hover .yg-entry-go,
+.yg-entry:focus-visible .yg-entry-go { background: var(--saffron); border-color: var(--saffron); color: #FFF4D6; }
 
 /* ---------- Финал ---------- */
 .yg-final {
@@ -3111,15 +3103,13 @@ section { padding: 76px 0 0; }
   .yg-cat-head { grid-template-columns: 1fr; gap: 14px; }
   .yg-bar { top: 10px; flex-direction: column; align-items: stretch; border-radius: 22px; }
   .yg-search { flex: none; }
-  .yg-grid { grid-template-columns: 1fr; }
   .yg-final { padding: 80px 0 170px; }
 }
 
 /* ---------- Спокойный режим ---------- */
 @media (prefers-reduced-motion: reduce) {
-  .yg-hero-bg, .yg-final-fire, .yg-btn-fire, .yg-btn-fire::before, .yg-card-ring circle, .pg-gate { animation: none; }
-  .yg-card.in { animation: none; }
-  .yg-card, .yg-ind, .yg-grid .yg-list-move, .pg-gate-btn, .pg-row-btn { transition: none; }
+  .yg-hero-bg, .yg-final-fire, .yg-btn-fire, .yg-btn-fire::before, .pg-gate { animation: none; }
+  .yg-entry, .yg-ind, .yg-ledger .yg-list-move, .yg-ledger .yg-list-enter-active, .yg-ledger .yg-list-leave-active, .pg-gate-btn, .pg-row-btn { transition: none; }
 }
 
 /* =============================================================
@@ -3404,6 +3394,70 @@ section { padding: 76px 0 0; }
 .tr-tour-price small { display: block; margin-bottom: 4px; font-size: 12px; color: var(--ink-faint); }
 .tr-tour-price b { font-family: var(--font-display); font-size: 36px; font-weight: 600; line-height: 1; color: var(--ink); }
 .tr-book { height: 52px; padding: 0 24px; font-size: 15px; }
+.tr-tour-acts { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+.tr-more {
+  height: 52px;
+  padding: 0 20px;
+  border-radius: 999px;
+  border: 1px solid var(--gold-line);
+  background: transparent;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background .25s ease, border-color .25s ease;
+}
+.tr-more:hover { background: var(--saffron-soft); border-color: var(--saffron); }
+.tr-more:focus-visible { outline: 2px solid var(--saffron); outline-offset: 3px; }
+
+/* Статус программы и подзаголовок */
+.tr-tour-status {
+  display: inline-block;
+  padding: 5px 14px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #FBF7EC;
+  background: var(--saffron);
+}
+.tr-tour-status[data-status="past"] { color: var(--ink); background: rgba(243, 217, 142, .55); }
+.tr-tour-status[data-status="new"] { background: var(--vermilion); }
+.tr-tour-status[data-status="dates"], .tr-tour-status[data-status="individual"] { color: var(--ink); background: var(--paper); border: 1px solid var(--gold-line); }
+.tr-tour-sub { margin: 12px 0 0; max-width: 40ch; font-size: 16px; font-weight: 500; line-height: 1.45; color: var(--saffron-deep); }
+.tr-arch { display: block; width: 100%; padding: 0; border: 0; cursor: pointer; }
+.tr-arch:focus-visible { outline: 2px solid var(--saffron); outline-offset: 4px; }
+.tr-seal.long b { font-size: 34px; }
+
+/* ---------- Окно «Подробнее» ---------- */
+.modal.tsh { position: relative; max-width: 720px; }
+.tsh-close { position: absolute; z-index: 3; top: 14px; right: 14px; background: rgba(251, 247, 236, .92); }
+.tsh-scroll { overflow-y: auto; overscroll-behavior: contain; }
+.tsh-cover { position: relative; aspect-ratio: 16 / 7; overflow: hidden; background: #2A1410; }
+.tsh-cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.tsh-cover-tint { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(42, 20, 16, .05) 40%, rgba(42, 20, 16, .55)); }
+.tsh-cover .tr-tour-status { position: absolute; left: 24px; bottom: 18px; }
+.tsh-body { padding: 22px 28px 8px; }
+.tsh-gallery { display: flex; gap: 10px; margin: 18px -28px 4px; padding: 0 28px 6px; list-style: none; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: 28px; }
+.tsh-gallery li { flex: 0 0 auto; width: min(260px, 70%); aspect-ratio: 4 / 5; overflow: hidden; border-radius: 16px; background: #2A1410; scroll-snap-align: start; }
+.tsh-gallery img { width: 100%; height: 100%; object-fit: cover; }
+.tsh-title { margin: 4px 0 0; font-family: var(--font-display); font-size: clamp(30px, 4vw, 42px); font-weight: 600; line-height: 1.02; }
+.tsh-sub { margin: 8px 0 0; font-size: 15px; font-weight: 500; color: var(--saffron-deep); }
+.tsh-route { display: flex; flex-wrap: wrap; gap: 6px 0; margin: 20px 0 6px; padding: 0; list-style: none; font-size: 13.5px; font-weight: 500; }
+.tsh-route li { display: flex; align-items: center; }
+.tsh-route li + li::before { content: ""; width: 22px; height: 1px; margin: 0 8px; background: repeating-linear-gradient(90deg, var(--gold-line) 0 4px, transparent 4px 7px); }
+.tsh-p { margin: 14px 0 0; font-size: 15.5px; line-height: 1.65; color: var(--ink-soft); }
+.tsh-focus { display: flex; gap: 12px; align-items: flex-start; margin: 22px 0 0; padding: 16px 18px; border-radius: 18px; background: var(--saffron-soft); font-family: var(--font-display); font-size: 21px; font-weight: 600; line-height: 1.2; color: var(--ink); }
+.tsh-focus svg { flex: none; width: 20px; height: 20px; margin-top: 2px; color: var(--saffron); }
+.tsh-prog h3 { margin: 26px 0 10px; font-family: var(--font-display); font-size: 23px; font-weight: 600; line-height: 1.1; color: var(--ink); }
+.tsh-prog ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+.tsh-prog li { position: relative; padding-left: 22px; font-size: 15px; line-height: 1.5; }
+.tsh-prog li::first-letter { text-transform: uppercase; }
+.tsh-prog li::before { content: ""; position: absolute; left: 2px; top: .6em; width: 7px; height: 7px; border-radius: 50%; background: var(--saffron); }
+.tsh-note { margin: 22px 0 0; padding: 14px 16px; border-radius: 14px; border: 1px dashed var(--gold-line); font-size: 14px; line-height: 1.55; color: var(--ink-soft); }
+.tsh-foot { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; padding: 16px 28px 20px; border-top: 1px dashed var(--gold-line); background: var(--paper-2); }
+.tsh-foot .tr-tour-price b { font-size: 30px; }
+.tsh-prnote { display: block; max-width: 34ch; margin-top: 6px; font-size: 12.5px; line-height: 1.4; color: var(--ink-faint); }
 
 /* Появление и перестройка списка */
 .reveal-ready .tr-tour:not(.in) { opacity: 0; transform: translateY(70px); }
@@ -3442,7 +3496,12 @@ section { padding: 76px 0 0; }
   .tr-sun { right: -20%; top: 30%; }
   .tr-stops li { font-size: 12.5px; }
   .tr-tour-foot { flex-direction: column; align-items: stretch; }
+  .tr-tour-acts { flex-direction: column-reverse; align-items: stretch; }
   .tr-book { justify-content: center; }
+  .tsh-cover { aspect-ratio: 16 / 9; }
+  .tsh-body { padding: 18px 20px 6px; }
+  .tsh-gallery { margin-inline: -20px; padding-inline: 20px; scroll-padding-inline: 20px; }
+  .tsh-foot { padding: 14px 20px 18px; flex-direction: column; align-items: stretch; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -3459,7 +3518,7 @@ section { padding: 76px 0 0; }
    Ночной hero с рисующейся ведической картой → путь на бумаге →
    проводники в изумрудной ночи → дипломы → огненный финал.
    ============================================================ */
-.about { overflow-x: clip; padding: 0; min-height: 0; background: var(--paper); }
+.inner.about { overflow-x: clip; padding: 0; min-height: 0; background: var(--paper); }
 .ab-in { max-width: 1160px; margin: 0 auto; padding: 0 40px; position: relative; z-index: 2; }
 .ab-line { display: block; overflow: hidden; padding-bottom: .1em; margin-bottom: -.1em; }
 .ab-line > span { display: inline-block; }
@@ -3905,4 +3964,175 @@ section { padding: 76px 0 0; }
   .ab-words { -webkit-mask-image: none; mask-image: none; }
   .ab-rail b { transform: none; }
   .ab-step .ab-num { color: #3A1E08; background: linear-gradient(135deg, #FBD36B, #E4711C); border-color: transparent; }
+}
+
+/* ============================================================
+   ✦ РЕДАКЦИОННЫЙ СЛОЙ (ноябрь 2026)
+   Главная перестаёт быть стопкой одинаковых центрованных экранов:
+   шапки секций — заголовок слева, пояснение справа (как на внутренних
+   страницах), декор — только там, где он что-то значит, огонь — в начале
+   и в конце пути. Финал и герой остаются по центру: это два «обряда».
+   ============================================================ */
+
+/* ---------- Альманах ягий: адаптив ---------- */
+@media (max-width: 1080px) {
+  .yg-entry { grid-template-columns: 76px minmax(0, 1fr) auto; gap: 10px 22px; padding-right: 0; }
+  .yg-entry-date { grid-row: span 3; }
+  .yg-entry-purpose, .yg-entry-theme { grid-column: 2 / -1; }
+  .yg-entry-end { grid-column: 3; grid-row: 1; }
+}
+@media (max-width: 600px) {
+  .yg-entry { grid-template-columns: 62px minmax(0, 1fr); gap: 8px 16px; padding: 18px 0; }
+  .yg-entry-date { grid-row: span 4; justify-content: flex-start; padding-top: 4px; }
+  .yg-entry-date b { font-size: 40px; }
+  .yg-entry-name { font-size: 26px; }
+  .yg-entry-end { grid-column: 2; grid-row: auto; justify-content: space-between; margin-top: 6px; }
+  .yg-entry-go { height: 42px; padding: 0 20px; }
+}
+
+/* ---------- Ритм секций главной ---------- */
+@media (min-width: 861px) {
+  /* Не «экран на секцию»: высота по содержимому, щедрые ровные поля */
+  .home main.wrap > section:not(.pilgrim) {
+    min-height: 0;
+    padding-block: clamp(80px, 11vh, 136px);
+  }
+}
+
+/* ---------- Герой: заголовок в одну строку, текст над пламенем ---------- */
+@media (min-width: 861px) {
+  .home .hero { padding-top: clamp(104px, 14vh, 160px); }
+  .home h1 { font-size: clamp(56px, 6.6vw, 104px); line-height: .94; margin-bottom: 22px; }
+  .home .hero .sub { max-width: 40ch; margin-bottom: 30px; }
+  .home .fire { height: 60%; }
+}
+
+/* ---------- Шапка секции ---------- */
+.home .sec-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, .85fr);
+  gap: 16px clamp(32px, 5vw, 96px);
+  align-items: end;
+  max-width: none;
+  margin-bottom: clamp(40px, 7vh, 80px);
+}
+.home .sec-head .h2 { margin: 0; text-align: left; text-wrap: balance; }
+.home .altar .sec-head { max-width: none; margin-bottom: clamp(40px, 7vh, 80px); }
+.home .sec-head .lead { margin: 0; text-align: left; max-width: 46ch; }
+@media (max-width: 860px) {
+  .home .sec-head { grid-template-columns: 1fr; gap: 14px; margin-bottom: clamp(30px, 8vw, 44px); }
+}
+
+/* ---------- Проводники: крупный разворот, вторая колонка ниже ---------- */
+.home .mentors {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(40px, 7vw, 128px);
+  align-items: start;
+}
+.home .mentor:nth-child(2) { margin-top: clamp(80px, 14vh, 168px); }
+.mentor-arch {
+  position: relative;
+  width: min(100%, 420px);
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 50% 50% 18px 18px / 40% 40% 18px 18px;
+  background: #2A1A10;
+  box-shadow:
+    0 0 0 6px var(--paper),
+    0 0 0 7px rgba(211, 185, 120, .7),
+    0 44px 80px -44px rgba(58, 38, 18, .75);
+}
+.mentor-arch img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.mentor-nm {
+  margin: clamp(30px, 4vh, 44px) 0 10px;
+  font-family: var(--font-display);
+  font-size: clamp(36px, 3.4vw, 54px);
+  font-weight: 600;
+  line-height: 1;
+  color: var(--ink);
+}
+.mentor-role { margin: 0 0 18px; font-size: 15px; font-weight: 500; color: var(--saffron-deep); }
+.mentor-bio { margin: 0; max-width: 46ch; font-size: 17px; line-height: 1.65; color: var(--ink-soft); }
+.mentors-more {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: clamp(48px, 8vh, 88px);
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--gold-line);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--saffron-deep);
+  text-decoration: none;
+  transition: border-color .2s ease, color .2s ease;
+}
+.mentors-more svg { width: 17px; height: 17px; transition: transform .3s cubic-bezier(.2, .8, .3, 1); }
+.mentors-more:hover { color: var(--saffron); border-color: var(--saffron); }
+.mentors-more:hover svg { transform: translateX(4px); }
+@media (max-width: 860px) {
+  .home .mentors { grid-template-columns: 1fr; gap: 64px; }
+  .home .mentor:nth-child(2) { margin-top: 0; }
+  .mentor-arch { width: min(84%, 360px); }
+  .mentor-nm { font-size: clamp(32px, 9vw, 40px); }
+  .mentor-bio { font-size: 16px; }
+}
+
+/* ---------- Отзывы: колонки без пустых хвостов и дыр в сетке ---------- */
+.home .trust .reviews {
+  display: block;
+  max-width: none;
+  columns: 3 300px;
+  column-gap: clamp(16px, 2vw, 24px);
+}
+.home .trust .review {
+  break-inside: avoid;
+  margin-bottom: clamp(16px, 2vw, 24px);
+}
+.home .trust .review blockquote {
+  font-style: normal;
+  font-weight: 500;
+  font-size: clamp(19px, 1.5vw, 22px);
+  line-height: 1.42;
+}
+.home .trust .rev-cta { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
+
+/* ---------- Финал: живой огонь вместо мандалы — рифма с героем ---------- */
+.home .cta-band { overflow: visible; }
+.home .cta-band > .cta-fire {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  bottom: 0;
+  height: min(52%, 460px);
+  width: auto;
+  transform: translateX(-50%);
+  mix-blend-mode: screen;
+  opacity: .9;
+  pointer-events: none;
+  -webkit-mask: radial-gradient(56% 74% at 50% 52%, #000 40%, rgba(0, 0, 0, 0) 100%);
+  mask: radial-gradient(56% 74% at 50% 52%, #000 40%, rgba(0, 0, 0, 0) 100%);
+  animation: flick 4.8s ease-in-out infinite;
+}
+@media (min-width: 861px) {
+  .home .cta-band {
+    min-height: min(92dvh, 860px);
+    justify-content: flex-start;
+    padding-top: clamp(96px, 15vh, 160px);
+    padding-bottom: clamp(260px, 38vh, 380px);
+  }
+  .home .cta-band .h2 { max-width: 14ch; margin-inline: auto; }
+}
+@media (max-width: 860px) {
+  .home .cta-band { padding-bottom: clamp(220px, 62vw, 300px); }
+  .home .cta-band > .cta-fire { height: clamp(220px, 60vw, 300px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home .cta-band > .cta-fire { animation: none; }
+}
+
+/* Телефон: заголовок героя крупнее — он главный голос первого экрана */
+@media (max-width: 860px) {
+  .home h1 { font-size: clamp(40px, 11.5vw, 60px); line-height: .98; }
 }

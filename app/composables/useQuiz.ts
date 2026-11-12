@@ -8,8 +8,8 @@ import type { ThemeKey } from './useCatalog'
 export interface Intent { id: ThemeKey, title: string, hint: string }
 export interface Duration { v: string, label: string }
 export interface ResultYagya { n: string, d: string }
-/** Прямая запись на конкретную услугу — без вопросов опросника */
-export interface Signup { kind: 'practice' | 'yagya', name: string }
+/** Прямая запись на конкретную услугу — без вопросов опросника; waitlist — следующая группа тура */
+export interface Signup { kind: 'practice' | 'yagya' | 'tour' | 'waitlist', name: string }
 
 const INTENTS: Intent[] = [
   { id: 'health', title: 'Здоровье и силы', hint: 'Восстановление' },

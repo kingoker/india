@@ -41,6 +41,7 @@ if (config.public.metrikaId) {
       <NuxtPage />
     </main>
     <SiteFooter />
+    <EdgeBlur />
     <SiteNav />
     <QuizModal />
     <ReviewModal />

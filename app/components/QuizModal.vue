@@ -10,7 +10,14 @@ const {
 } = useQuiz()
 
 const nextLabel = computed(() => (step.value === 1 ? 'Далее' : 'Показать путь'))
-const signupKindLabel = computed(() => (signup.value?.kind === 'yagya' ? 'Ягья' : 'Практика'))
+// Подпись, что обсудит эксперт, и текст после отправки — по типу записи
+const SIGNUP_TEXT = {
+  practice: { label: 'Практика', agree: 'согласует время первой встречи', done: 'Вы записались' },
+  yagya: { label: 'Ягья', agree: 'согласует день обряда', done: 'Вы записались' },
+  tour: { label: 'Тур', agree: 'расскажет о программе и датах', done: 'Заявка на тур' },
+  waitlist: { label: 'Сообщим о наборе', agree: 'сообщит, когда откроется набор', done: 'Вы в списке ожидания' }
+}
+const signupText = computed(() => SIGNUP_TEXT[signup.value?.kind || 'practice'])
 
 function onKey(e: KeyboardEvent) {
   if (e.key === 'Escape' && open.value) close()
@@ -46,13 +53,13 @@ watch(open, (v) => {
           <template v-if="!submitted">
             <div class="rlead">
               <div class="rq">
-                {{ signupKindLabel }}
+                {{ signupText.label }}
               </div>
               <div class="rt">
                 {{ signup.name }}
               </div>
               <div class="rdesc">
-                Оставьте имя и контакт. Эксперт напишет вам, ответит на вопросы и согласует {{ signup.kind === 'yagya' ? 'день обряда' : 'время первой встречи' }}.
+                Оставьте имя и контакт. Эксперт напишет вам, ответит на вопросы и {{ signupText.agree }}.
               </div>
             </div>
             <div class="qfield" style="margin-top:16px">
@@ -81,7 +88,7 @@ watch(open, (v) => {
             <div class="qtitle">
               Заявка отправлена
             </div>
-            <p>Вы записались: {{ signup.name }}. Эксперт свяжется с вами в ближайшее время.</p>
+            <p>{{ signupText.done }}: {{ signup.name }}. Эксперт свяжется с вами в ближайшее время.</p>
             <button
               class="btn-primary"
               style="width:100%;margin-top:18px;background:var(--saffron);color:#FBF7EC"

@@ -1,36 +1,53 @@
 <script setup lang="ts">
-const { TURY, TOUR_FILTERS, plural } = useCatalog()
-const { openQuiz } = useQuiz()
+import type { Tour } from '~/composables/useCatalog'
+
+const { TURY, TOUR_FILTERS, TOUR_STATUS, plural } = useCatalog()
+const { openQuiz, openSignup } = useQuiz()
 const route = useRoute()
 const router = useRouter()
 
 useSeoMeta({
   title: 'Туры в Индию',
-  description: 'Паломнические туры в Индию: храмы, живой огонь и практика вживую небольшой группой, с наставниками на всём пути.'
+  description: 'Туры в Индию с наставниками: храмы девяти планет, йога и кундалини-йога, аюрведа, Ришикеш, Кашмир и Ладакх. Рассказываем о смыслах, а не только показываем места.'
 })
+
+// Окно «Подробнее»: открытый тур живёт в адресе (?tour=), на него можно дать ссылку
+const active = computed<Tour | null>(() => TURY.find(t => t.id === route.query.tour) || null)
+function openTour(t: Tour) {
+  router.replace({ query: { ...route.query, tour: t.id } })
+}
+function closeTour() {
+  const { tour: _, ...rest } = route.query
+  router.replace({ query: rest })
+}
+function book(t: Tour) {
+  closeTour()
+  openSignup(TOUR_STATUS[t.status].kind, t.n)
+}
 
 const validCats = TOUR_FILTERS.map(f => f.cat)
 const q = ref('')
 const cat = ref('all')
 
-// Фильтр живёт в адресе (?region=), чтобы им можно было поделиться
+// Фильтр живёт в адресе (?type=), чтобы им можно было поделиться
 function syncFromQuery() {
-  const t = String(route.query.region || '')
+  const t = String(route.query.type || '')
   cat.value = validCats.includes(t) ? t : 'all'
 }
 syncFromQuery()
-watch(() => route.query.region, syncFromQuery)
+watch(() => route.query.type, syncFromQuery)
 
 function setCat(c: string) {
   cat.value = c
-  router.replace({ query: c === 'all' ? {} : { region: c } })
+  const { type: _, ...rest } = route.query
+  router.replace({ query: c === 'all' ? rest : { ...rest, type: c } })
 }
 
 const items = computed(() => {
   const query = q.value.trim().toLowerCase()
   return TURY.filter((o) => {
     const okCat = cat.value === 'all' || o.cat === cat.value
-    const okQ = !query || (`${o.n} ${o.p} ${o.cl} ${o.route.join(' ')}`).toLowerCase().includes(query)
+    const okQ = !query || (`${o.n} ${o.sub} ${o.cl} ${o.route.join(' ')}`).toLowerCase().includes(query)
     return okCat && okQ
   })
 })
@@ -45,17 +62,17 @@ const counts = computed(() => {
 
 // Что получает путешественник — коротко и по делу
 const FACTS = [
-  { icon: 'flame', t: 'Участвуете сами', d: 'Ягьи, пуджи и медитации у живого огня — не со стороны, а внутри обряда.' },
-  { icon: 'user', t: 'Наставники рядом', d: 'Эксперты объясняют, что и зачем происходит, и ведут вас весь путь.' },
-  { icon: 'globe', t: 'Небольшая группа', d: 'Без туристических толп: храмы, дорога и жильё организованы за вас.' }
+  { icon: 'temple', t: 'Смыслы, а не только места', d: 'Объясняем практики, храмовые ритуалы и астрологическую традицию.' },
+  { icon: 'leaf', t: 'Опыт не нужен', d: 'Йогой и астрологией заранее заниматься не обязательно — можно начать с интереса.' },
+  { icon: 'user', t: 'Своя глубина', d: 'Пробуете практики в комфортном темпе, наставники рядом весь путь.' }
 ]
 
-// Маршрут на первом экране: узлы лежат на кривой в системе 1200×520
+// Маршрут на первом экране: узлы лежат на кривой в системе 1200×520 (с юга на север)
 const PINS = [
-  { name: 'Мадурай', x: 70, y: 430, at: 0 },
-  { name: 'Тируваннамалай', x: 400, y: 345, at: 0.3 },
-  { name: 'Варанаси', x: 760, y: 215, at: 0.64 },
-  { name: 'Ришикеш', x: 1110, y: 85, at: 1 }
+  { name: 'Тамилнад', x: 70, y: 430, at: 0 },
+  { name: 'Гирнар', x: 400, y: 345, at: 0.3 },
+  { name: 'Ришикеш', x: 760, y: 215, at: 0.64 },
+  { name: 'Кашмир', x: 1110, y: 85, at: 1 }
 ]
 
 // Индикатор активного региона
@@ -94,13 +111,13 @@ function toCatalog() {
       <EmberField :ox="0.74" :oy="0.62" :count="38" :spread="320" />
 
       <div class="wrap tr-hero-in">
-        <h1 class="tr-h1" aria-label="Паломнические туры в Индию">
-          <span class="tr-line" aria-hidden="true"><span style="--i: 0">Паломнические</span></span>
-          <span class="tr-line" aria-hidden="true"><span style="--i: 1">туры в Индию</span></span>
+        <h1 class="tr-h1" aria-label="Туры в Индию со смыслом">
+          <span class="tr-line" aria-hidden="true"><span style="--i: 0">Туры в Индию</span></span>
+          <span class="tr-line" aria-hidden="true"><span style="--i: 1">со смыслом</span></span>
         </h1>
         <p class="tr-def">
-          Вы едете не смотреть храмы, а участвовать: сидеть у живого огня, проводить пуджи и практиковать рядом с наставниками.
-          Для тех, кто давно хочет в Индию, но не хочет ехать один.
+          Мы не только показываем места, но и рассказываем, что за ними стоит: йога и кундалини-йога,
+          астрология и значение храмовых ритуалов. Глубину знакомства выбираете вы.
         </p>
         <div class="tr-cta">
           <button class="yg-btn yg-btn-fire" @click="openQuiz()">
@@ -167,12 +184,12 @@ function toCatalog() {
             Выберите маршрут
           </h2>
           <p data-reveal>
-            Каждый тур — отдельная дорога по местам силы. Выберите регион или найдите город, который давно хотите увидеть.
+            Храмы, практика, новые впечатления или спокойный отдых — выберите, за чем хотите поехать.
           </p>
         </div>
 
         <div class="yg-bar">
-          <div class="yg-chips" role="tablist" aria-label="Регион">
+          <div class="yg-chips" role="tablist" aria-label="Направление">
             <span
               class="yg-ind"
               :class="{ ready: ind.ready }"
@@ -206,17 +223,11 @@ function toCatalog() {
         <TransitionGroup v-if="items.length" name="tr-list" tag="div" class="tr-list">
           <TourCard
             v-for="(t, i) in items"
-            :key="t.n"
+            :key="t.id"
             :index="i"
-            :title="t.n"
-            :region="t.cl"
-            :purpose="t.p"
-            :days="t.d"
-            :price="t.pr"
-            :route="t.route"
-            :img="t.img"
-            :pos="t.pos"
-            @select="openQuiz()"
+            :tour="t"
+            @more="openTour(t)"
+            @select="book(t)"
           />
         </TransitionGroup>
         <div v-else class="yg-empty">
@@ -239,5 +250,9 @@ function toCatalog() {
         </button>
       </div>
     </section>
+
+    <Teleport to="body">
+      <TourSheet :tour="active" @close="closeTour" @select="active && book(active)" />
+    </Teleport>
   </div>
 </template>

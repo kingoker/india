@@ -245,7 +245,6 @@ onBeforeUnmount(() => {
       </div>
 
       <div class="hero-copy">
-        <span class="kicker">Ведическая астрология и Индия</span>
         <h1>Огонь, <span class="keep">открывающий путь</span></h1>
         <p class="sub">
           Читаем вашу ведическую карту и ведём по ней — от первого разбора до огненных ягий и поездки к местам силы Индии.
@@ -260,13 +259,14 @@ onBeforeUnmount(() => {
       <!-- Ваш путь -->
       <section class="env-paper paper-dawn">
         <span class="deco-mandala tr" data-par="0.05" aria-hidden="true"><AppOrnament name="mandala" /></span>
-        <AppOrnament name="divider" class="sec-div" data-reveal />
-        <h2 class="h2" data-reveal>
-          Как мы ведём вас по карте
-        </h2>
-        <p class="lead" data-reveal>
-          Три шага, а не каталог ритуалов: каждый следующий вырастает из предыдущего.
-        </p>
+        <div class="sec-head" data-reveal>
+          <h2 class="h2">
+            Как мы ведём вас по карте
+          </h2>
+          <p class="lead">
+            Три шага, а не каталог ритуалов: каждый следующий вырастает из предыдущего.
+          </p>
+        </div>
         <div ref="pathEl" class="path" data-reveal>
           <span class="path-track" aria-hidden="true" />
           <span class="path-ember" aria-hidden="true" />
@@ -307,59 +307,53 @@ onBeforeUnmount(() => {
       </section>
 
       <!-- Проводники -->
-      <section id="experts" class="env-paper paper-saffron">
-        <span class="deco-mandala bl slow-rev" data-par="0.04" aria-hidden="true"><AppOrnament name="mandala" /></span>
-        <AppOrnament name="divider" class="sec-div" data-reveal />
-        <h2 class="h2" data-reveal>
-          Ваши проводники
-        </h2>
-        <p class="lead" data-reveal>
-          Две практикующие в традиции джйотиша и аюрведы. Они читают карту, проводят ягьи и сопровождают в поездках.
-        </p>
-        <div class="guides" data-reveal-stagger>
-          <div class="guide">
-            <div class="portrait">
-              <div class="arch">
-                <img src="/images/expert-1.webp" alt="Татьяна Карпенкова">
-              </div>
-            </div>
-            <div class="about">
-              <div class="nm">
-                Татьяна Карпенкова
-              </div>
-              <div class="tags">
-                <span>Кундалини-йога</span><span>Аюрведа</span><span>Астрология</span>
-              </div>
-              <p class="bio">
-                Мягко веду в практику: через тело, ритм и осознанную еду помогаю прийти к внутренней тишине. А через астрологию — увидеть свою природу и найти точки опоры.
-              </p>
-            </div>
-          </div>
-          <div class="guide">
-            <div class="portrait">
-              <div class="arch">
-                <img src="/images/expert-2.jpg" alt="Александра Андреева">
-              </div>
-            </div>
-            <div class="about">
-              <div class="nm">
-                Александра Андреева
-              </div>
-              <div class="tags">
-                <span>Джйотиш</span><span>Интегральный психолог</span><span>Смрити-медитация</span>
-              </div>
-              <p class="bio">
-                Помогаю найти выход из сложных ситуаций и принять верное решение. Смотрю вашу астрологическую карту (Джйотиш), чтобы понять, что сейчас происходит, и подбираю методы коррекции: от психологических практик и медитаций — до телесных и энергетических. Вы получите понятный план действий и внутреннюю устойчивость.
-              </p>
-            </div>
-          </div>
+      <section id="experts" class="experts env-paper paper-saffron">
+        <div class="sec-head" data-reveal>
+          <h2 class="h2">
+            Ваши проводники
+          </h2>
+          <p class="lead">
+            Две практикующие в традиции джйотиша и аюрведы. Они читают карту, проводят ягьи и сопровождают в поездках.
+          </p>
         </div>
+        <div class="mentors">
+          <article class="mentor" data-reveal>
+            <div class="mentor-arch">
+              <img src="/images/expert-1.webp" alt="Татьяна Карпенкова" loading="lazy">
+            </div>
+            <h3 class="mentor-nm">
+              Татьяна Карпенкова
+            </h3>
+            <p class="mentor-role">
+              Кундалини-йога, аюрведа, астрология
+            </p>
+            <p class="mentor-bio">
+              Мягко веду в практику: через тело, ритм и осознанную еду помогаю прийти к внутренней тишине. А через астрологию — увидеть свою природу и найти точки опоры.
+            </p>
+          </article>
+          <article class="mentor" data-reveal>
+            <div class="mentor-arch">
+              <img src="/images/expert-2.jpg" alt="Александра Андреева" loading="lazy">
+            </div>
+            <h3 class="mentor-nm">
+              Александра Андреева
+            </h3>
+            <p class="mentor-role">
+              Джйотиш, интегральная психология, смрити-медитация
+            </p>
+            <p class="mentor-bio">
+              Помогаю найти выход из сложных ситуаций и принять верное решение. Смотрю вашу астрологическую карту (Джйотиш), чтобы понять, что сейчас происходит, и подбираю методы коррекции: от психологических практик и медитаций — до телесных и энергетических. Вы получите понятный план действий и внутреннюю устойчивость.
+            </p>
+          </article>
+        </div>
+        <NuxtLink to="/o-nas" class="mentors-more" data-reveal>
+          Подробнее о нас и дипломы<AppIcon name="arrow" :sw="2" />
+        </NuxtLink>
       </section>
 
       <!-- Подбор по теме: тема слева → практики и ягьи справа -->
       <section class="altar env-paper paper-ember" aria-labelledby="altar-title">
-        <span class="deco-mandala tr" data-par="0.05" aria-hidden="true"><AppOrnament name="mandala" /></span>
-        <div class="altar-head" data-reveal>
+        <div class="altar-head sec-head" data-reveal>
           <h2 id="altar-title" class="h2">
             Что поможет с вашим запросом
           </h2>
@@ -447,29 +441,15 @@ onBeforeUnmount(() => {
 
       <!-- Доверие / отзывы (данные — шаблонные, заменить на реальные) -->
       <section class="trust env-night">
-        <span class="deco-mandala center" data-par="0.07" aria-hidden="true"><AppOrnament name="mandala" /></span>
-        <AppOrnament name="divider" class="sec-div" data-reveal />
-        <h2 class="h2" data-reveal>
-          Тем, кто уже прошёл этот путь
-        </h2>
-        <p class="lead" data-reveal>
-          Разбор, ягьи и поездки — глазами людей, которые начинали с того же вопроса, что и вы.
-        </p>
-
-        <ul class="stats" aria-label="Коротко о практике" data-reveal-stagger>
-          <li>
-            <span class="num">7 лет</span>
-            <span class="lbl">ведём практику</span>
-          </li>
-          <li>
-            <span class="num">400+</span>
-            <span class="lbl">разборов карт</span>
-          </li>
-          <li>
-            <span class="num">6</span>
-            <span class="lbl">поездок к местам силы</span>
-          </li>
-        </ul>
+        <div class="sec-head" data-reveal>
+          <h2 class="h2">
+            Тем, кто уже прошёл этот путь
+          </h2>
+          <p class="lead">
+            Разбор, ягьи и поездки — глазами людей, которые начинали с того же вопроса, что и вы.
+            За семь лет — больше 400 разборов карт и шесть поездок к местам силы.
+          </p>
+        </div>
 
         <div class="reviews" data-reveal-stagger>
           <template v-for="(r, i) in REVIEWS" :key="i">
@@ -515,10 +495,10 @@ onBeforeUnmount(() => {
       <section class="pilgrim env-teal" aria-labelledby="pilgrim-title">
         <div class="pil-head">
           <h2 id="pilgrim-title" class="h2" data-reveal>
-            Паломничество в Индию
+            Путешествия в Индию
           </h2>
           <p class="lead" data-reveal>
-            Храмы, живой огонь и практика вживую — небольшой группой и с наставниками на всём пути.
+            Храмы, йога и новые впечатления — с наставниками, которые объясняют смыслы, а не только показывают места.
           </p>
           <div class="pil-cta" data-reveal>
             <NuxtLink to="/tury" class="btn-primary pil-btn">
@@ -528,11 +508,14 @@ onBeforeUnmount(() => {
         </div>
 
         <ul class="board" aria-label="Ближайшие маршруты" data-reveal-stagger>
-          <li v-for="t in TURY" :key="t.n">
-            <NuxtLink to="/tury" class="route">
-              <span class="route-days">
+          <li v-for="t in TURY" :key="t.id">
+            <NuxtLink :to="{ path: '/tury', query: { tour: t.id } }" class="route">
+              <span v-if="t.d" class="route-days" :class="{ long: (tourDays(t.d).n?.length || 0) > 2 }">
                 <b>{{ tourDays(t.d).n }}</b>
                 <span>{{ tourDays(t.d).unit }}</span>
+              </span>
+              <span v-else class="route-days route-days-ic" aria-hidden="true">
+                <AppIcon name="temple" :sw="1.2" />
               </span>
               <span class="route-name">{{ t.n }}</span>
               <span class="route-area">{{ t.cl }}</span>
@@ -544,7 +527,6 @@ onBeforeUnmount(() => {
 
       <!-- Вопросы и ответы -->
       <section id="faq" class="faq env-paper paper-saffron" aria-labelledby="faq-title">
-        <span class="deco-mandala tr" data-par="0.05" aria-hidden="true"><AppOrnament name="mandala" /></span>
         <div class="faq-grid">
           <div class="faq-side" data-reveal>
             <h2 id="faq-title" class="h2">
@@ -577,12 +559,12 @@ onBeforeUnmount(() => {
       </section>
 
       <div class="cta-band env-fire">
-        <span class="deco-mandala center" data-par="0.06" aria-hidden="true"><AppOrnament name="mandala" /></span>
+        <img class="cta-fire" src="/images/fire.png" alt="" aria-hidden="true" loading="lazy">
         <h2 class="h2" data-reveal>
-          Ближайшие ягьи — в начале октября
+          Начните с разбора карты
         </h2>
         <p data-reveal>
-          Разбор карты за 60 минут покажет, какой ритуал ваш и в какую дату его проводить.
+          За 60 минут увидите, какой ритуал ваш и в какую дату его проводить.
         </p>
         <button class="btn-primary" data-reveal @click="openQuiz()">
           <AppIcon name="spark" />Записаться на разбор
